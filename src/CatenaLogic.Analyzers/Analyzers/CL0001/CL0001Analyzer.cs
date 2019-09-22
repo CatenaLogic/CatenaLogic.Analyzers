@@ -1,10 +1,14 @@
 ﻿namespace CatenaLogic.Analyzers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using System.Linq;
+    using System.Runtime.InteropServices;
 
     public class CL0001Analyzer : AnalyzerBase
     {
@@ -57,6 +61,7 @@
                 return;
             }
 
+
             var symbolInfo = context.SemanticModel.GetSymbolInfo(identifierNameSyntax);
             var typeSymbol = symbolInfo.Symbol as ITypeSymbol;
             if (typeSymbol is null)
@@ -78,16 +83,43 @@
                 }
             }
 
-            var expectedAsyncOverloadName = $"{memberAccessExpression.Name.Identifier.Value}Async";
-            if (!typeSymbol.TryFindFirstMember(expectedAsyncOverloadName, out _))
+            if (context.SemanticModel.GetSymbolInfo(memberAccessExpression).Symbol is IMethodSymbol memberAccessSymbolInfo)
             {
-                return;
-            }
+                var expectedAsyncOverloadName = $"{memberAccessExpression.Name.Identifier.Value}Async";
 
-            context.ReportDiagnostic(
-                Diagnostic.Create(
-                    Descriptors.CL0001_UseAsyncOverloadInsideAsyncMethods,
-                    expression.GetLocation()));
+                bool overloadFound = false;
+                foreach (var methodSymbolInfo in typeSymbol.GetMembers(expectedAsyncOverloadName).OfType<IMethodSymbol>())
+                {
+                    if (memberAccessSymbolInfo.Parameters.Length != methodSymbolInfo.Parameters.Length)
+                    {
+                        continue;
+                    }
+
+                    bool parametersMatch = true;
+                    for (int i = 0; i < memberAccessSymbolInfo.Parameters.Length; i++)
+                    {
+                        if (memberAccessSymbolInfo.Parameters[i].Type.Name != methodSymbolInfo.Parameters[i].Type.Name)
+                        {
+                            parametersMatch = false;
+                            break;
+                        }
+                    }
+
+                    if (parametersMatch)
+                    {
+                        overloadFound = true;
+                        break;
+                    }
+                }
+
+                if (overloadFound)
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            Descriptors.CL0001_UseAsyncOverloadInsideAsyncMethods,
+                            expression.GetLocation()));
+                }
+            }
         }
     }
 }
