@@ -1,14 +1,10 @@
 ﻿namespace CatenaLogic.Analyzers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using System.Linq;
-    using System.Runtime.InteropServices;
 
     public class CL0001Analyzer : AnalyzerBase
     {
@@ -88,9 +84,19 @@
                 var expectedAsyncOverloadName = $"{memberAccessExpression.Name.Identifier.Value}Async";
 
                 bool overloadFound = false;
-                foreach (var methodSymbolInfo in typeSymbol.GetMembers(expectedAsyncOverloadName).OfType<IMethodSymbol>())
+                foreach (var overloadMethodSymbolInfo in typeSymbol.GetMembers(expectedAsyncOverloadName).OfType<IMethodSymbol>())
                 {
-                    if (memberAccessSymbolInfo.Parameters.Length != methodSymbolInfo.Parameters.Length)
+                    int expectedParametersCount = memberAccessSymbolInfo.Parameters.Length;
+                    if (overloadMethodSymbolInfo.Parameters.Length > 0)
+                    {
+                        var lastParameterType = overloadMethodSymbolInfo.Parameters[overloadMethodSymbolInfo.Parameters.Length - 1].Type;
+                        if (lastParameterType.ToString() == "System.Threading.CancellationToken")
+                        {
+                            expectedParametersCount++;
+                        }
+                    }
+
+                    if (expectedParametersCount != overloadMethodSymbolInfo.Parameters.Length)
                     {
                         continue;
                     }
@@ -98,7 +104,7 @@
                     bool parametersMatch = true;
                     for (int i = 0; i < memberAccessSymbolInfo.Parameters.Length; i++)
                     {
-                        if (memberAccessSymbolInfo.Parameters[i].Type.Name != methodSymbolInfo.Parameters[i].Type.Name)
+                        if (!memberAccessSymbolInfo.Parameters[i].Type.Equals(overloadMethodSymbolInfo.Parameters[i].Type))
                         {
                             parametersMatch = false;
                             break;
