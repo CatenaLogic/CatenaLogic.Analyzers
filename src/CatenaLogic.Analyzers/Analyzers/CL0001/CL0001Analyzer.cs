@@ -104,7 +104,7 @@
                     bool parametersMatch = true;
                     for (int i = 0; i < memberAccessSymbolInfo.Parameters.Length; i++)
                     {
-                        if (!memberAccessSymbolInfo.Parameters[i].Type.Equals(overloadMethodSymbolInfo.Parameters[i].Type))
+                        if (!SymbolEqualityComparer.Default.Equals(memberAccessSymbolInfo.Parameters[i].Type, overloadMethodSymbolInfo.Parameters[i].Type))
                         {
                             parametersMatch = false;
                             break;
