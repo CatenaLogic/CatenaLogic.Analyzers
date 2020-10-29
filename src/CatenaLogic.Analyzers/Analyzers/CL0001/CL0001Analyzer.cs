@@ -16,14 +16,29 @@
                 return;
             }
 
+            if (context.CancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
             var expression = context.Node as InvocationExpressionSyntax;
             if (expression is null)
             {
                 return;
             }
 
+            if (context.CancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
             var memberAccessExpression = expression.Expression as MemberAccessExpressionSyntax;
             if (memberAccessExpression is null)
+            {
+                return;
+            }
+
+            if (context.CancellationToken.IsCancellationRequested)
             {
                 return;
             }
@@ -35,14 +50,29 @@
                 return;
             }
 
+            if (context.CancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
             if (parentMethod.ReturnType != KnownSymbols.Task &&
                 !parentMethod.ReturnType.IsAssignableTo(KnownSymbols.Task, context.SemanticModel))
             {
                 return;
             }
 
+            if (context.CancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
             // Check if this is actually an async method (not a sync, task returning call)
             if (!parentMethod.Modifiers.Any(x => x.Value.Equals("async")))
+            {
+                return;
+            }
+
+            if (context.CancellationToken.IsCancellationRequested)
             {
                 return;
             }
@@ -57,6 +87,10 @@
                 return;
             }
 
+            if (context.CancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
 
             var symbolInfo = context.SemanticModel.GetSymbolInfo(identifierNameSyntax);
             var typeSymbol = symbolInfo.Symbol as ITypeSymbol;
@@ -79,14 +113,19 @@
                 }
             }
 
+            if (context.CancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
             if (context.SemanticModel.GetSymbolInfo(memberAccessExpression).Symbol is IMethodSymbol memberAccessSymbolInfo)
             {
                 var expectedAsyncOverloadName = $"{memberAccessExpression.Name.Identifier.Value}Async";
 
-                bool overloadFound = false;
+                var overloadFound = false;
                 foreach (var overloadMethodSymbolInfo in typeSymbol.GetMembers(expectedAsyncOverloadName).OfType<IMethodSymbol>())
                 {
-                    int expectedParametersCount = memberAccessSymbolInfo.Parameters.Length;
+                    var expectedParametersCount = memberAccessSymbolInfo.Parameters.Length;
                     if (overloadMethodSymbolInfo.Parameters.Length > 0)
                     {
                         var lastParameterType = overloadMethodSymbolInfo.Parameters[overloadMethodSymbolInfo.Parameters.Length - 1].Type;
@@ -96,13 +135,18 @@
                         }
                     }
 
+                    if (context.CancellationToken.IsCancellationRequested)
+                    {
+                        return;
+                    }
+
                     if (expectedParametersCount != overloadMethodSymbolInfo.Parameters.Length)
                     {
                         continue;
                     }
 
-                    bool parametersMatch = true;
-                    for (int i = 0; i < memberAccessSymbolInfo.Parameters.Length; i++)
+                    var parametersMatch = true;
+                    for (var i = 0; i < memberAccessSymbolInfo.Parameters.Length; i++)
                     {
                         if (!SymbolEqualityComparer.Default.Equals(memberAccessSymbolInfo.Parameters[i].Type, overloadMethodSymbolInfo.Parameters[i].Type))
                         {
@@ -111,11 +155,21 @@
                         }
                     }
 
+                    if (context.CancellationToken.IsCancellationRequested)
+                    {
+                        return;
+                    }
+
                     if (parametersMatch)
                     {
                         overloadFound = true;
                         break;
                     }
+                }
+
+                if (context.CancellationToken.IsCancellationRequested)
+                {
+                    return;
                 }
 
                 if (overloadFound)
