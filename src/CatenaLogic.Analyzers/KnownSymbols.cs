@@ -7,7 +7,7 @@
         internal static readonly TaskType Task = new TaskType();
         internal static readonly TaskOfTType TaskOfT = new TaskOfTType();
 
-        private static QualifiedType Create(string qualifiedName, string alias = null)
+        private static QualifiedType Create(string qualifiedName, string alias = "")
         {
             return new QualifiedType(qualifiedName, alias);
         }
