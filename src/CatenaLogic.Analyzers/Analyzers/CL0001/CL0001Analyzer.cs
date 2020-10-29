@@ -55,8 +55,7 @@
                 return;
             }
 
-            if (parentMethod.ReturnType != KnownSymbols.Task &&
-                !parentMethod.ReturnType.IsAssignableTo(KnownSymbols.Task, context.SemanticModel))
+            if (!parentMethod.ReturnType.IsTask(context))
             {
                 return;
             }
@@ -67,7 +66,7 @@
             }
 
             // Check if this is actually an async method (not a sync, task returning call)
-            if (!parentMethod.Modifiers.Any(x => x.Value.Equals("async")))
+            if (!parentMethod.Modifiers.Any(x => x.Value?.Equals("async") ?? false))
             {
                 return;
             }
