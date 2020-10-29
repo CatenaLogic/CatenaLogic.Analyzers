@@ -55,8 +55,7 @@
                 return;
             }
 
-            if (parentMethod.ReturnType != KnownSymbols.Task &&
-                !parentMethod.ReturnType.IsAssignableTo(KnownSymbols.Task, context.SemanticModel))
+            if (!parentMethod.ReturnType.IsTask(context))
             {
                 return;
             }
