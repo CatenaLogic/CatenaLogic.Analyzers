@@ -13,6 +13,23 @@
             isEnabledByDefault: true,
             description: "This method has an async overload. Since this method is invoked from within an async method, it's recommended to use the async overload.");
 
+        internal static readonly DiagnosticDescriptor CL0002_UseAsyncSuffixForAsyncMethods = Create(
+            id: "CL0002",
+            title: @"Use ""Async"" suffix for async methods",
+            messageFormat: @"This method marked with async keyword. The Microsoft's recommended naming convention assume to append ""Async"" to the names of methods that have an async modifier.",
+            category: AnalyzerCategory.Async,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: @"This method marked with async keyword. The Microsoft's recommended naming convention assume to append ""Async"" to the names of methods that have an async modifier.");
+
+        internal static readonly DiagnosticDescriptor CL0003_DontUseExtensionsNamespace = Create(
+            id: "CL0003",
+            title: @"Don't use ""Extensions"" namespace for classes containing Extensions methods",
+            messageFormat: "This namespace should be renamed",
+            category: AnalyzerCategory.Namespace,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: @"This namespace should be renamed.");
 
         /// <summary>
         /// Create a DiagnosticDescriptor, which provides description about a <see cref="T:Microsoft.CodeAnalysis.Diagnostic" />.

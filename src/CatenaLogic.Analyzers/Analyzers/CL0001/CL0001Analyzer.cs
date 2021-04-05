@@ -10,8 +10,7 @@
     {
         public override void HandleSyntaxNode(SyntaxNodeAnalysisContext context)
         {
-            var methodSymbol = context.ContainingSymbol as IMethodSymbol;
-            if (methodSymbol is null)
+            if (context.ContainingSymbol is not IMethodSymbol methodSymbol)
             {
                 return;
             }

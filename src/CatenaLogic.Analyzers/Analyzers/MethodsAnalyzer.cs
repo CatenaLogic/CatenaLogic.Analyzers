@@ -9,7 +9,7 @@
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-            ImmutableArray.Create(Descriptors.CL0001_UseAsyncOverloadInsideAsyncMethods);
+            ImmutableArray.Create(Descriptors.CL0001_UseAsyncOverloadInsideAsyncMethods, Descriptors.CL0002_UseAsyncSuffixForAsyncMethods);
 
         protected override bool ShouldHandleSyntaxNode(SyntaxNodeAnalysisContext context)
         {
