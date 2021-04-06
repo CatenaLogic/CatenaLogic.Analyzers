@@ -55,5 +55,28 @@ public class C
 
             RoslynAssert.Valid(Analyzer, before);
         }
+
+        [Test]
+        public void Valid_Code_02()
+        {
+            var before = @"
+using System;
+using System.IO;
+using System.Threading.Tasks;
+
+public class C
+{
+    public async void MyMethod()
+    {
+        using (var fileStream = File.OpenRead(""filename""))
+        {
+                var reader = new StreamReader(fileStream);
+                var text = await reader.ReadToEndAsync();
+            }
+        }
+    }";
+
+            RoslynAssert.Valid(Analyzer, before);
+        }
     }
 }

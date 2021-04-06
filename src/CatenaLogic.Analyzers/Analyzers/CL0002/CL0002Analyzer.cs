@@ -9,7 +9,7 @@
     {
         public override void HandleSyntaxNode(SyntaxNodeAnalysisContext context)
         {
-            if (context.Node is not MethodDeclarationSyntax)
+            if (context.Node is not MethodDeclarationSyntax methodDeclarationSyntax)
             {
                 return;
             }
@@ -30,6 +30,11 @@
             }
 
             if (methodSymbol.Name.EndsWith("Async"))
+            {
+                return;
+            }
+
+            if (!methodDeclarationSyntax.ReturnType.IsTask(context))
             {
                 return;
             }
