@@ -1,6 +1,8 @@
 ﻿namespace CatenaLogic.Analyzers
 {
+    using System.Linq;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     public class CL0003Analyzer : AnalyzerBase
@@ -10,7 +12,12 @@
 
         public override void HandleSyntaxNode(SyntaxNodeAnalysisContext context)
         {
-            if (context.ContainingSymbol is not INamespaceSymbol namespaceSymbol)
+            if (context.Node is not ClassDeclarationSyntax classDeclarationSyntaxNode)
+            {
+                return;
+            }
+
+            if (context.ContainingSymbol is null)
             {
                 return;
             }
@@ -20,17 +27,32 @@
                 return;
             }
 
-            if (string.Equals(namespaceSymbol.Name, HandledNamespace, System.StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(namespaceSymbol.Name, HandledNamespacePlural, System.StringComparison.OrdinalIgnoreCase))
+            var namespaceSymbol = context.ContainingSymbol.ContainingNamespace;
+
+            if (namespaceSymbol.Name.EndsWith(HandledNamespace, System.StringComparison.OrdinalIgnoreCase) ||
+                namespaceSymbol.Name.EndsWith(HandledNamespacePlural, System.StringComparison.OrdinalIgnoreCase))
             {
                 if (!namespaceSymbol.OriginalDefinition.Name.EndsWith(namespaceSymbol.Name))
                 {
                     return;
                 }
 
+                var reportLocation = namespaceSymbol.Locations.FirstOrDefault(l => l.SourceTree == classDeclarationSyntaxNode.GetLocation().SourceTree);
+
+                if(reportLocation is null)
+                {
+                    // Cannot locate file for report, probably metadata?
+                    return;
+                }
+
+                if (context.CancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
+
                 context.ReportDiagnostic(
                     Diagnostic.Create(
-                        Descriptors.CL0003_DontUseExtensionsNamespace, context.Node.GetLocation()));
+                        Descriptors.CL0003_DontUseExtensionsNamespace, reportLocation));
             }
         }
     }

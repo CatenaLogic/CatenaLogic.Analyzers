@@ -14,7 +14,7 @@
         protected override bool ShouldHandleSyntaxNode(SyntaxNodeAnalysisContext context)
         {
             var memberSymbol = context.ContainingSymbol;
-            if (memberSymbol is null || memberSymbol.Kind != SymbolKind.Namespace)
+            if (memberSymbol is null || (memberSymbol.Kind != SymbolKind.Namespace && memberSymbol.Kind != SymbolKind.NamedType))
             {
                 return false;
             }
