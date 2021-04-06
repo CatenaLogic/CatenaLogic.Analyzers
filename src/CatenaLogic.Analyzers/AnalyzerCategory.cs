@@ -8,5 +8,6 @@
     {
         internal const string Async = "CatenaLogic.Analyzers.Async";
         internal const string Namespace = "CatenaLogic.Analyzers.Namespace";
+        internal const string Expression = "CatenaLogic.Analyzers.Expression";
     }
 }

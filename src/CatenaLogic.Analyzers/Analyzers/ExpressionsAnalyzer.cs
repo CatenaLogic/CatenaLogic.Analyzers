@@ -2,19 +2,19 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class NamespacesAnalyzer : DiagnosticAnalyzerBase
+    internal class ExpressionsAnalyzer : DiagnosticAnalyzerBase
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-            ImmutableArray.Create(Descriptors.CL0003_DontUseExtensionsNamespace, Descriptors.CL0004_DontUseInterfacesNamespace, Descriptors.CL0005_DontUseHelpersNamespace);
+            ImmutableArray.Create(Descriptors.CL0006_ConstantPatternIsRecommendedForNullCheck);
 
         protected override bool ShouldHandleSyntaxNode(SyntaxNodeAnalysisContext context)
         {
-            var memberSymbol = context.ContainingSymbol;
-            if (memberSymbol is null || (memberSymbol.Kind != SymbolKind.Namespace && memberSymbol.Kind != SymbolKind.NamedType))
+            if (context.Node is not ExpressionSyntax)
             {
                 return false;
             }

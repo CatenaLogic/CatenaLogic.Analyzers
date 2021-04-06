@@ -53,7 +53,7 @@
            id: "CL0006",
            title: @"Using ""is"" statement inside null comparison expression is recommended style",
            messageFormat: @"Starting with C# 7.0 the constant pattern is supported by the ""is"" keyword. Performing pattern matching with ""null"" ""Is"" can be used to test whether an expression equals a null.",
-           category: AnalyzerCategory.Namespace,
+           category: AnalyzerCategory.Expression,
            defaultSeverity: DiagnosticSeverity.Warning,
            isEnabledByDefault: true,
            description: @"Starting with C# 7.0 the constant pattern is supported by the ""is"" keyword. Performing pattern matching with ""null"" ""Is"" can be used to test whether an expression equals a null.");
