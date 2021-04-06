@@ -2,12 +2,18 @@
 {
     using System.Linq;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     public class CL0002Analyzer : AnalyzerBase
     {
         public override void HandleSyntaxNode(SyntaxNodeAnalysisContext context)
         {
+            if (context.Node is not MethodDeclarationSyntax)
+            {
+                return;
+            }
+
             if (context.ContainingSymbol is not IMethodSymbol methodSymbol)
             {
                 return;
