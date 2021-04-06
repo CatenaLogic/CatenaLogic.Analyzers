@@ -6,10 +6,10 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
-    public class CL0003Analyzer : ProhibitedNamespaceDiagnosticAnalyzerBase
+    public class CL0005Analyzer : ProhibitedNamespaceDiagnosticAnalyzerBase
     {
-        private readonly static string HandledNamespace = "Extension";
-        private readonly static string HandledNamespacePlural = "Extensions";
+        private readonly static string HandledNamespace = "Helper";
+        private readonly static string HandledNamespacePlural = "Helpers";
 
         protected override void HandleNamespaceSymbol(INamespaceSymbol namespaceSymbol, SyntaxNodeAnalysisContext originalContext, ClassDeclarationSyntax classDeclarationSyntax, SyntaxTree originalSyntaxTree)
         {

@@ -31,6 +31,24 @@
             isEnabledByDefault: true,
             description: @"This namespace should be renamed.");
 
+        internal static readonly DiagnosticDescriptor CL0004_DontUseInterfacesNamespace = Create(
+           id: "CL0004",
+           title: @"Don't use ""Interfaces"" namespace for interfaces",
+           messageFormat: "This namespace should be renamed",
+           category: AnalyzerCategory.Namespace,
+           defaultSeverity: DiagnosticSeverity.Warning,
+           isEnabledByDefault: true,
+           description: @"This namespace should be renamed.");
+
+        internal static readonly DiagnosticDescriptor CL0005_DontUseHelpersNamespace = Create(
+           id: "CL0005",
+           title: @"Don't use ""Helpers"" namespace for helper classes",
+           messageFormat: "This namespace should be renamed",
+           category: AnalyzerCategory.Namespace,
+           defaultSeverity: DiagnosticSeverity.Warning,
+           isEnabledByDefault: true,
+           description: @"This namespace should be renamed.");
+
         /// <summary>
         /// Create a DiagnosticDescriptor, which provides description about a <see cref="T:Microsoft.CodeAnalysis.Diagnostic" />.
         /// NOTE: For localizable <paramref name="title" />, <paramref name="description" /> and/or <paramref name="messageFormat" />,
