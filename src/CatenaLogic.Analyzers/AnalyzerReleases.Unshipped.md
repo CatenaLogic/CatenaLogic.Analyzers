@@ -9,3 +9,4 @@ CL0002 | CatenaLogic.Analyzers.Async | Warning | Use "Async" suffix for async me
 CL0003 | CatenaLogic.Analyzers.Namespace | Warning | Don't use "Extensions" namespace for classes containing Extensions methods
 CL0004 | CatenaLogic.Analyzers.Namespace | Warning | Don't use "Interfaces" namespace for interfaces
 CL0005 | CatenaLogic.Analyzers.Namespace | Warning | Don't use ""Helpers"" namespace for helper classes
+CL0006 | CatenaLogic.Analyzers.Namespace | Warning | Using "is" statement inside null comparison expression is recommended style
