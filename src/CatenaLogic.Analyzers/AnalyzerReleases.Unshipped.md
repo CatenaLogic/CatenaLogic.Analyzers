@@ -5,3 +5,5 @@
 Rule ID | Category | Severity | Notes
 --------|----------|----------|--------------------
 CL0001  |  CatenaLogic.Analyzers.Async   |  Warning | Use async overload inside this async method, [Documentation](https://github.com/CatenaLogic/CatenaLogic.Analyzers/blob/develop/doc/CL0001.md)
+CL0002 | CatenaLogic.Analyzers.Async | Warning | Use "Async" suffix for async methods
+CL0003 | CatenaLogic.Analyzers.Namespace | Warning | Don't use "Extensions namespace for classes containing Extensions methods
