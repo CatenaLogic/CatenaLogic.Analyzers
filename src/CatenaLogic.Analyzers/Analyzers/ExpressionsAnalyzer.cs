@@ -14,7 +14,12 @@
 
         protected override bool ShouldHandleSyntaxNode(SyntaxNodeAnalysisContext context)
         {
-            if (context.Node is not ExpressionSyntax)
+            if (context.Node is ClassDeclarationSyntax)
+            {
+                return false;
+            }
+
+            if (context.Node is not MemberDeclarationSyntax)
             {
                 return false;
             }

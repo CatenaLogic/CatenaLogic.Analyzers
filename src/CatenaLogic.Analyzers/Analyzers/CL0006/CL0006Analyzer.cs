@@ -1,5 +1,6 @@
 ﻿namespace CatenaLogic.Analyzers
 {
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -9,31 +10,44 @@
     {
         public override void HandleSyntaxNode(SyntaxNodeAnalysisContext context)
         {
-            if (context.Node is not BinaryExpressionSyntax binaryExpressionSyntax)
+            if (context.Node is not MemberDeclarationSyntax memberDeclarationSyntax)
             {
                 return;
             }
 
-            if (binaryExpressionSyntax.Kind() != SyntaxKind.EqualsExpression && binaryExpressionSyntax.Kind() != SyntaxKind.NotEqualsExpression)
+            // Optimize this query
+            var descendants = memberDeclarationSyntax.DescendantNodes(d => true).Where(node => node is BinaryExpressionSyntax).Cast<BinaryExpressionSyntax>().ToList();
+
+            foreach(var binaryExpressionSyntax in descendants)
             {
-                return;
+                if (binaryExpressionSyntax is null)
+                {
+                    continue;
+                }
+
+                if (binaryExpressionSyntax.Kind() != SyntaxKind.EqualsExpression && binaryExpressionSyntax.Kind() != SyntaxKind.NotEqualsExpression)
+                {
+                    continue;
+                }
+
+                var rightOperand = binaryExpressionSyntax.Right;
+
+                if (rightOperand is not LiteralExpressionSyntax rightOperandLiteral)
+                {
+                    continue;
+                }
+
+                if (rightOperandLiteral.Kind() != SyntaxKind.NullLiteralExpression)
+                {
+                    continue;
+                }
+
+                var reportedToken = binaryExpressionSyntax.ChildTokens().FirstOrDefault(token => token.Kind() == SyntaxKind.EqualsEqualsToken || token.Kind() == SyntaxKind.ExclamationEqualsToken);
+
+                context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            Descriptors.CL0006_ConstantPatternIsRecommendedForNullCheck, reportedToken.GetLocation()));
             }
-
-            var rightOperand = binaryExpressionSyntax.Right;
-
-            if (rightOperand is not LiteralExpressionSyntax rightOperandLiteral)
-            {
-                return;
-            }
-
-            if (rightOperandLiteral.Kind() != SyntaxKind.NullLiteralExpression)
-            {
-                return;
-            }
-
-            context.ReportDiagnostic(
-                    Diagnostic.Create(
-                        Descriptors.CL0006_ConstantPatternIsRecommendedForNullCheck, binaryExpressionSyntax.GetLocation()));
         }
     }
 }
