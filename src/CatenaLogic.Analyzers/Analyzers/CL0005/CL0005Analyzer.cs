@@ -36,7 +36,7 @@
 
                 originalContext.ReportDiagnostic(
                     Diagnostic.Create(
-                        Descriptors.CL0003_DontUseExtensionsNamespace, reportLocation));
+                        Descriptors.CL0004_DontUseInterfacesNamespace, reportLocation));
             }
         }
     }
