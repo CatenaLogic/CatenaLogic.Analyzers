@@ -5,18 +5,19 @@
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class MethodsAnalyzer : DiagnosticAnalyzerBase
+    internal class NamespacesAnalyzer : DiagnosticAnalyzerBase
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(
-                Descriptors.CL0001_UseAsyncOverloadInsideAsyncMethods, 
-                Descriptors.CL0002_UseAsyncSuffixForAsyncMethods);
+                Descriptors.CL0003_DontUseExtensionsNamespace, 
+                Descriptors.CL0004_DontUseInterfacesNamespace, 
+                Descriptors.CL0005_DontUseHelpersNamespace);
 
         protected override bool ShouldHandleSyntaxNode(SyntaxNodeAnalysisContext context)
         {
-            var memberSymbol = context.ContainingSymbol as ISymbol;
-            if (memberSymbol is null || memberSymbol.Kind != SymbolKind.Method)
+            var memberSymbol = context.ContainingSymbol;
+            if (memberSymbol is null || (memberSymbol.Kind != SymbolKind.Namespace && memberSymbol.Kind != SymbolKind.NamedType))
             {
                 return false;
             }

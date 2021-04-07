@@ -13,6 +13,50 @@
             isEnabledByDefault: true,
             description: "This method has an async overload. Since this method is invoked from within an async method, it's recommended to use the async overload.");
 
+        internal static readonly DiagnosticDescriptor CL0002_UseAsyncSuffixForAsyncMethods = Create(
+            id: "CL0002",
+            title: @"Use ""Async"" suffix for async methods",
+            messageFormat: @"This method marked with async keyword. The Microsoft's recommended naming convention assume to append ""Async"" to the names of methods that have an async modifier.",
+            category: AnalyzerCategory.Async,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: @"This method marked with async keyword. The Microsoft's recommended naming convention assume to append ""Async"" to the names of methods that have an async modifier.");
+
+        internal static readonly DiagnosticDescriptor CL0003_DontUseExtensionsNamespace = Create(
+            id: "CL0003",
+            title: @"Don't use ""Extensions"" namespace for classes containing Extensions methods",
+            messageFormat: "This namespace should be renamed",
+            category: AnalyzerCategory.Namespace,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: @"This namespace should be renamed.");
+
+        internal static readonly DiagnosticDescriptor CL0004_DontUseInterfacesNamespace = Create(
+           id: "CL0004",
+           title: @"Don't use ""Interfaces"" namespace for interfaces",
+           messageFormat: "This namespace should be renamed",
+           category: AnalyzerCategory.Namespace,
+           defaultSeverity: DiagnosticSeverity.Warning,
+           isEnabledByDefault: true,
+           description: @"This namespace should be renamed.");
+
+        internal static readonly DiagnosticDescriptor CL0005_DontUseHelpersNamespace = Create(
+           id: "CL0005",
+           title: @"Don't use ""Helpers"" namespace for helper classes",
+           messageFormat: "This namespace should be renamed",
+           category: AnalyzerCategory.Namespace,
+           defaultSeverity: DiagnosticSeverity.Warning,
+           isEnabledByDefault: true,
+           description: @"This namespace should be renamed.");
+
+        internal static readonly DiagnosticDescriptor CL0006_ConstantPatternIsRecommendedForNullCheck = Create(
+           id: "CL0006",
+           title: @"Using ""is"" statement inside null comparison expression is recommended style",
+           messageFormat: @"Starting with C# 7.0 the constant pattern is supported by the ""is"" keyword. Performing pattern matching with ""null"" ""is"" can be used to test whether an expression equals a null.",
+           category: AnalyzerCategory.Expression,
+           defaultSeverity: DiagnosticSeverity.Warning,
+           isEnabledByDefault: true,
+           description: @"Starting with C# 7.0 the constant pattern is supported by the ""is"" keyword. Performing pattern matching with ""null"" ""is"" can be used to test whether an expression equals a null.");
 
         /// <summary>
         /// Create a DiagnosticDescriptor, which provides description about a <see cref="T:Microsoft.CodeAnalysis.Diagnostic" />.
