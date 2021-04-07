@@ -11,11 +11,16 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CL0002CodeFixProvider))]
-    public class CL0002CodeFixProvider : CodeFixProvider
+    public sealed class CL0002CodeFixProvider : CodeFixProvider
     {
         private const string Title = "Fix method name";
 
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(Descriptors.CL0002_UseAsyncSuffixForAsyncMethods.Id);
+
+        public override FixAllProvider? GetFixAllProvider()
+        {
+            return WellKnownFixAllProviders.BatchFixer;
+        }
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
