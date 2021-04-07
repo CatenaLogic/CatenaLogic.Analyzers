@@ -26,7 +26,6 @@
             var namespaceSymbol = context.ContainingSymbol.ContainingNamespace;
 
             var originalSourceTree = classDeclarationSyntaxNode.GetLocation().SourceTree;
-
             if (originalSourceTree is null)
             {
                 return;

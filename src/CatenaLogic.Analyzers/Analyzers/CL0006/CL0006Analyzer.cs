@@ -31,7 +31,6 @@
                 }
 
                 var rightOperand = binaryExpressionSyntax.Right;
-
                 if (rightOperand is not LiteralExpressionSyntax rightOperandLiteral)
                 {
                     continue;
