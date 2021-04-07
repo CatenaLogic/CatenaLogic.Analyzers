@@ -33,10 +33,15 @@
             var diagnostic = context.Diagnostics.First();
             var diagnosticSpan = diagnostic.Location.SourceSpan;
 
-            // Find the invocation expression identified by the diagnostic.
+            // Find the syntax identified by the diagnostic.
             var diagnosticNode = root.FindNode(diagnosticSpan);
 
             if (diagnosticNode is not MethodDeclarationSyntax methodDeclatarionSyntax)
+            {
+                return;
+            }
+
+            if (context.CancellationToken.IsCancellationRequested)
             {
                 return;
             }
