@@ -9,7 +9,10 @@
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-            ImmutableArray.Create(Descriptors.CL0003_DontUseExtensionsNamespace, Descriptors.CL0004_DontUseInterfacesNamespace, Descriptors.CL0005_DontUseHelpersNamespace);
+            ImmutableArray.Create(
+                Descriptors.CL0003_DontUseExtensionsNamespace, 
+                Descriptors.CL0004_DontUseInterfacesNamespace, 
+                Descriptors.CL0005_DontUseHelpersNamespace);
 
         protected override bool ShouldHandleSyntaxNode(SyntaxNodeAnalysisContext context)
         {
