@@ -34,7 +34,7 @@
             var diagnosticSpan = diagnostic.Location.SourceSpan;
 
             // Find the expression token identified by the diagnostic.
-            var diagnsoticToken = root.FindToken(diagnosticSpan.Start);
+            var diagnosticToken = root.FindToken(diagnosticSpan.Start);
 
             if (context.CancellationToken.IsCancellationRequested)
             {
@@ -42,8 +42,7 @@
             }
 
             // Find the parent equals expression
-            var equalsExpression = diagnsoticToken.Parent?.AncestorsAndSelf().OfType<BinaryExpressionSyntax>().First();
-
+            var equalsExpression = diagnosticToken.Parent?.AncestorsAndSelf().OfType<BinaryExpressionSyntax>().First();
             if (equalsExpression is null)
             {
                 return;
@@ -52,10 +51,10 @@
             // Register a code action that will invoke the fix.
             context.RegisterCodeFix(
               CodeAction.Create(Title, c =>
-              FixRegexAsync(context.Document, equalsExpression, diagnsoticToken.Kind(), c), equivalenceKey: Title), diagnostic);
+              FixNullEqualityCheckAsync(context.Document, equalsExpression, diagnosticToken.Kind(), c), equivalenceKey: Title), diagnostic);
         }
 
-        private async Task<Document> FixRegexAsync(Document document, BinaryExpressionSyntax expresssionSyntax, SyntaxKind tokenKind, CancellationToken cancellationToken)
+        private async Task<Document> FixNullEqualityCheckAsync(Document document, BinaryExpressionSyntax expresssionSyntax, SyntaxKind tokenKind, CancellationToken cancellationToken)
         {
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken);
             if (semanticModel is null)

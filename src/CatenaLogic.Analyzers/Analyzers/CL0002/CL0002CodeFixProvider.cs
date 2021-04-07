@@ -49,10 +49,10 @@
             // Register a code action that will invoke the fix.
             context.RegisterCodeFix(
               CodeAction.Create(Title, c =>
-              FixRegexAsync(context.Document, methodDeclatarionSyntax, c), equivalenceKey: Title), diagnostic);
+              FixMethodNameAsync(context.Document, methodDeclatarionSyntax, c), equivalenceKey: Title), diagnostic);
         }
 
-        private async Task<Document> FixRegexAsync(Document document, MethodDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
+        private async Task<Document> FixMethodNameAsync(Document document, MethodDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
         {
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken);
             if (semanticModel is null)
