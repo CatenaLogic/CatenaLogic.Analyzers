@@ -1,8 +1,5 @@
 ﻿namespace CatenaLogic.Analyzers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     public abstract class AnalyzerBase : IAnalyzer
