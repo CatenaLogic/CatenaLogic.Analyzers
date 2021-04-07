@@ -13,7 +13,7 @@
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CL0006CodeFixProvider))]
     public class CL0006CodeFixProvider : CodeFixProvider
     {
-        private const string Title = @"Change equality check to ""is"" statement";
+        private const string Title = @"Change to ""is"" statement";
 
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(Descriptors.CL0006_ConstantPatternIsRecommendedForNullCheck.Id);
 
