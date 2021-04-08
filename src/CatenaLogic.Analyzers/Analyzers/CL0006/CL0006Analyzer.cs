@@ -18,7 +18,7 @@
             // Optimize this query
             var descendants = memberDeclarationSyntax.DescendantNodes(d => true).Where(node => node is BinaryExpressionSyntax).Cast<BinaryExpressionSyntax>().ToList();
 
-            foreach(var binaryExpressionSyntax in descendants)
+            foreach (var binaryExpressionSyntax in descendants)
             {
                 if (binaryExpressionSyntax is null)
                 {
@@ -41,12 +41,62 @@
                     continue;
                 }
 
+                //note: Check is it part of simple lambda for an Expression parameter
+                var lambdaNode = FindParentExpresson<SimpleLambdaExpressionSyntax>(binaryExpressionSyntax, 7);
+
+                if (lambdaNode is not null)
+                {
+                    var argumentTypeInfo = context.SemanticModel.GetTypeInfo(lambdaNode);
+
+                    if (argumentTypeInfo.ConvertedType is null)
+                    {
+                        continue;
+                    }
+
+                    if (argumentTypeInfo.ConvertedType.Name == "Expression" &&
+                        string.Equals(argumentTypeInfo.ConvertedType.ContainingNamespace.ToString(), "System.Linq.Expressions"))
+                    {
+                        return;
+                    }
+                }
+                else
+                {
+                    // Ignore inside query 
+                    var queryBody = binaryExpressionSyntax.Ancestors(false).FirstOrDefault(q => q is QueryBodySyntax) as QueryBodySyntax;
+                    if (queryBody != null)
+                    {
+                        return;
+                    }
+                }
+
+
                 var reportedToken = binaryExpressionSyntax.ChildTokens().FirstOrDefault(token => token.Kind() == SyntaxKind.EqualsEqualsToken || token.Kind() == SyntaxKind.ExclamationEqualsToken);
 
                 context.ReportDiagnostic(
                         Diagnostic.Create(
                             Descriptors.CL0006_ConstantPatternIsRecommendedForNullCheck, reportedToken.GetLocation()));
             }
+        }
+
+        private T? FindParentExpresson<T>(SyntaxNode node, int depth) where T : ExpressionSyntax
+        {
+            if (depth == 0)
+            {
+                return null;
+            }
+
+            var parent = node.Parent;
+            if (parent is null)
+            {
+                return null;
+            }
+
+            if (parent is T)
+            {
+                return parent as T;
+            }
+
+            return FindParentExpresson<T>(parent, depth--);
         }
     }
 }
