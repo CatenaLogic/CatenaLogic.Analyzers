@@ -94,7 +94,7 @@
                 return typedParentExpresssion;
             }
 
-            return FindParentExpresson<T>(parent, depth--);
+            return FindParentExpresson<T>(parent, depth - 1);
         }
     }
 }
