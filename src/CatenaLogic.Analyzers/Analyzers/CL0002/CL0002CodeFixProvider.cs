@@ -9,6 +9,7 @@
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Rename;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CL0002CodeFixProvider))]
     public sealed class CL0002CodeFixProvider : CodeFixProvider
@@ -52,29 +53,37 @@
               FixMethodNameAsync(context.Document, methodDeclatarionSyntax, c), equivalenceKey: Title), diagnostic);
         }
 
-        private async Task<Document> FixMethodNameAsync(Document document, MethodDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
+        private async Task<Solution> FixMethodNameAsync(Document document, MethodDeclarationSyntax declarationSyntax, CancellationToken cancellationToken)
         {
+            var solution = document.Project.Solution;
+
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken);
             if (semanticModel is null)
             {
-                return document;
+                return solution;
             }
 
             var root = await document.GetSyntaxRootAsync();
             if (root is null)
             {
-                return document;
+                return solution;
             }
 
-            var methodIdentifier = declarationSyntax.ChildTokens().FirstOrDefault(token => token.Kind() == SyntaxKind.IdentifierToken);
+            var methodSymbol = semanticModel.GetDeclaredSymbol(declarationSyntax, cancellationToken);
 
-            var fixedMethodIdentifier = SyntaxFactory.Identifier(methodIdentifier.Text + "Async");
+            if (methodSymbol is null)
+            {
+                return solution;
+            }
 
-            var newRoot = root.ReplaceToken(methodIdentifier, fixedMethodIdentifier);
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return solution;
+            }
 
-            var newDocument = document.WithSyntaxRoot(newRoot);
+            var modifiedSolution = await Renamer.RenameSymbolAsync(solution, methodSymbol, methodSymbol.Name + "Async", solution.Workspace.Options, cancellationToken);
 
-            return newDocument;
+            return modifiedSolution;
         }
     }
 }

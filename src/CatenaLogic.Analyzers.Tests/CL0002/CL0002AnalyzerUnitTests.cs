@@ -78,5 +78,31 @@ public class C
 
             RoslynAssert.Valid(Analyzer, before);
         }
+
+        [Test]
+        // Ingore Main check
+        public void Valid_Code_03()
+        {
+            var before = @"
+using System;
+using System.IO;
+using System.Threading.Tasks;
+
+class Program
+    {
+        static async Task Main(string[] args)
+        {
+            Console.WriteLine(""Hello World!"");
+
+            using (var fileStream = File.OpenRead(""filename""))
+            {
+                var reader = new StreamReader(fileStream);
+                var text = await reader.ReadToEndAsync();
+            }
+        }
+    }";
+
+            RoslynAssert.Valid(Analyzer, before);
+        }
     }
 }

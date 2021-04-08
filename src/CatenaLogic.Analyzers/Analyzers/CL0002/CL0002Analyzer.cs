@@ -7,6 +7,8 @@
 
     public class CL0002Analyzer : AnalyzerBase
     {
+        private const string DefaultMainMethodName = "Main";
+
         public override void HandleSyntaxNode(SyntaxNodeAnalysisContext context)
         {
             if (context.Node is not MethodDeclarationSyntax methodDeclarationSyntax)
@@ -30,6 +32,12 @@
             }
 
             if (methodSymbol.Name.EndsWith("Async"))
+            {
+                return;
+            }
+
+            // Ignore Main method
+            if (string.Equals(methodSymbol.Name, DefaultMainMethodName) && methodSymbol.IsStatic)
             {
                 return;
             }
