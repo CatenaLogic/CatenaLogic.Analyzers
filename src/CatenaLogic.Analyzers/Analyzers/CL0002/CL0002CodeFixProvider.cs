@@ -70,7 +70,6 @@
             }
 
             var methodSymbol = semanticModel.GetDeclaredSymbol(declarationSyntax, cancellationToken);
-
             if (methodSymbol is null)
             {
                 return solution;
@@ -82,7 +81,6 @@
             }
 
             var modifiedSolution = await Renamer.RenameSymbolAsync(solution, methodSymbol, methodSymbol.Name + "Async", solution.Workspace.Options, cancellationToken);
-
             return modifiedSolution;
         }
     }

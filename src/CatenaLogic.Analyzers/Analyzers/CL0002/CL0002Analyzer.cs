@@ -37,7 +37,7 @@
             }
 
             // Ignore Main method
-            if (string.Equals(methodSymbol.Name, DefaultMainMethodName) && methodSymbol.IsStatic)
+            if (methodSymbol.IsStatic && string.Equals(methodSymbol.Name, DefaultMainMethodName))
             {
                 return;
             }

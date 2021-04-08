@@ -43,11 +43,9 @@
 
                 //note: Check is it part of simple lambda for an Expression parameter
                 var lambdaNode = FindParentExpresson<SimpleLambdaExpressionSyntax>(binaryExpressionSyntax, 7);
-
                 if (lambdaNode is not null)
                 {
                     var argumentTypeInfo = context.SemanticModel.GetTypeInfo(lambdaNode);
-
                     if (argumentTypeInfo.ConvertedType is null)
                     {
                         continue;
@@ -63,7 +61,7 @@
                 {
                     // Ignore inside query 
                     var queryBody = binaryExpressionSyntax.Ancestors(false).FirstOrDefault(q => q is QueryBodySyntax) as QueryBodySyntax;
-                    if (queryBody != null)
+                    if (queryBody is not null)
                     {
                         return;
                     }
@@ -91,9 +89,9 @@
                 return null;
             }
 
-            if (parent is T)
+            if (parent is T typedParentExpresssion)
             {
-                return parent as T;
+                return typedParentExpresssion;
             }
 
             return FindParentExpresson<T>(parent, depth--);
