@@ -26,11 +26,6 @@
                 return;
             }
 
-            if (!methodSymbol.IsAsync)
-            {
-                return;
-            }
-
             if (methodSymbol.Name.EndsWith("Async"))
             {
                 return;
