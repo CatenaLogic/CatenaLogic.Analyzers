@@ -68,7 +68,7 @@
                 }
 
 
-                var reportedToken = binaryExpressionSyntax.ChildTokens().FirstOrDefault(token => token.Kind() == SyntaxKind.EqualsEqualsToken || token.Kind() == SyntaxKind.ExclamationEqualsToken);
+                var reportedToken = binaryExpressionSyntax.ChildTokens().FirstOrDefault(token => token.IsKind(SyntaxKind.EqualsEqualsToken) || token.IsKind(SyntaxKind.ExclamationEqualsToken));
 
                 context.ReportDiagnostic(
                         Diagnostic.Create(
@@ -94,7 +94,7 @@
                 return typedParentExpresssion;
             }
 
-            return FindParentExpresson<T>(parent, depth--);
+            return FindParentExpresson<T>(parent, depth - 1);
         }
     }
 }
