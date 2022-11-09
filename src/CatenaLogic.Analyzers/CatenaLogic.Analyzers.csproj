@@ -1,11 +1,11 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras">
+<Project Sdk="MSBuild.Sdk.Extras">
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <AssemblyName>CatenaLogic.Analyzers</AssemblyName>
     <RootNamespace>CatenaLogic.Analyzers</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
     <PackageId>CatenaLogic.Analyzers</PackageId>
-    <PackageVersion>1.0.0-alpha0015</PackageVersion>
+    <PackageVersion>1.4.0-cl0007-0128</PackageVersion>
     <Description>Roslyn analyzers.</Description>
     <DevelopmentDependency>true</DevelopmentDependency>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
@@ -16,33 +16,30 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
-
   <PropertyGroup>
     <!-- SonarQube requires a project guid -->
     <ProjectGuid>0752EF2B-40BB-4B30-AC71-F8B90CFB9684</ProjectGuid>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Gu.Roslyn.Extensions.Source" Version="0.16.6" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.3.1" PrivateAssets="all" />
   </ItemGroup>
-
   <ItemGroup>
     <!-- Required for Gu.Roslyn.Extensions.Source -->
     <PackageDownload Include="Microsoft.NETCore.App.Ref" Version="[6.0.0]" />
     <PackageReference Include="TunnelVisionLabs.ReferenceAssemblyAnnotator" Version="1.0.0-alpha.160" PrivateAssets="all" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Update="NETStandard.Library" Version="2.0.3" PrivateAssets="all" />
   </ItemGroup>
-
   <ItemGroup>
     <None Update="tools\*.ps1" CopyToOutputDirectory="Always" Pack="true" PackagePath="" />
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>
-
+  <ItemGroup>
+    <Folder Include="Analyzers\Diagnostics\CL0007\" />
+  </ItemGroup>
   <Import Project="$(MSBuildProjectDirectory)\..\Directory.build.shared.explicit.props" Condition="Exists('$(MSBuildProjectDirectory)\..\Directory.build.shared.explicit.props')" />
   <Import Project="$(MSBuildProjectDirectory)\..\Directory.build.shared.mat.props" Condition="Exists('$(MSBuildProjectDirectory)\..\Directory.build.shared.mat.props')" />
 </Project>

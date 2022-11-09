@@ -6,10 +6,10 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
-    public class CL0005Analyzer : ProhibitedNamespaceDiagnosticAnalyzerBase
+    public class CL0004Analyzer : ProhibitedNamespaceDiagnosticRule
     {
-        private readonly static string HandledNamespace = "Helper";
-        private readonly static string HandledNamespacePlural = "Helpers";
+        private readonly static string HandledNamespace = "Interface";
+        private readonly static string HandledNamespacePlural = "Interfaces";
 
         protected override void HandleNamespaceSymbol(INamespaceSymbol namespaceSymbol, SyntaxNodeAnalysisContext originalContext, ClassDeclarationSyntax classDeclarationSyntax, SyntaxTree originalSyntaxTree)
         {
@@ -36,7 +36,7 @@
 
                 originalContext.ReportDiagnostic(
                     Diagnostic.Create(
-                        Descriptors.CL0005_DontUseHelpersNamespace, reportLocation));
+                        Descriptors.CL0004_DontUseInterfacesNamespace, reportLocation));
             }
         }
     }

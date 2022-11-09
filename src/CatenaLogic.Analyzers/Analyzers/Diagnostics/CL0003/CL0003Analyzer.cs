@@ -6,7 +6,7 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
-    public class CL0003Analyzer : ProhibitedNamespaceDiagnosticAnalyzerBase
+    public class CL0003Analyzer : ProhibitedNamespaceDiagnosticRule
     {
         private readonly static string HandledNamespace = "Extension";
         private readonly static string HandledNamespacePlural = "Extensions";
