@@ -58,6 +58,15 @@
            isEnabledByDefault: true,
            description: @"Starting with C# 7.0 the constant pattern is supported by the ""is"" keyword. Performing pattern matching with ""null"" ""is"" can be used to test whether an expression equals a null.");
 
+        internal static readonly DiagnosticDescriptor CL0007_DontPlaceHeaderOnTopOfCodeFile = Create(
+            id: CL0007Analyzer.Id,
+            title: @"Don't place header on top of code file",
+            messageFormat: @"Don't place header on top of code file",
+            category: AnalyzerCategory.Text,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: @"Don't place header on top of code file.");
+
         /// <summary>
         /// Create a DiagnosticDescriptor, which provides description about a <see cref="T:Microsoft.CodeAnalysis.Diagnostic" />.
         /// NOTE: For localizable <paramref name="title" />, <paramref name="description" /> and/or <paramref name="messageFormat" />,

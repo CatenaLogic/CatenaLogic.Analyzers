@@ -27,16 +27,39 @@
             context.EnableConcurrentExecution();
             context.RegisterOperationAction(
                 c => HandleOperationAction(c),
+                GetTriggerOperations());
+            context.RegisterSymbolAction(
+                c => HandleSymbolAction(c),
+                GetTriggerSymbols());
+            context.RegisterSyntaxNodeAction(
+                c => HandleSyntaxNodeAction(c),
+                GetTriggerSyntaxNodes());
+        }
+
+
+        protected virtual OperationKind[] GetTriggerOperations()
+        {
+            return new[] {
                 OperationKind.AnonymousFunction,
                 OperationKind.Await,
                 OperationKind.Block,
                 OperationKind.ExpressionStatement,
-                OperationKind.Invocation);
-            context.RegisterSymbolAction(
-                c => HandleSymbolAction(c),
-                SymbolKind.Method);
-            context.RegisterSyntaxNodeAction(
-                c => HandleSyntaxNodeAction(c),
+                OperationKind.Invocation
+            };
+        }
+
+        protected virtual SymbolKind[] GetTriggerSymbols()
+        {
+            return new[]
+            {
+                SymbolKind.Method,
+            };
+        }
+
+        protected virtual SyntaxKind[] GetTriggerSyntaxNodes()
+        {
+            return new SyntaxKind[]
+            {
                 SyntaxKind.FieldDeclaration,
                 SyntaxKind.ConstructorDeclaration,
                 SyntaxKind.EventDeclaration,
@@ -46,8 +69,8 @@
                 SyntaxKind.MethodDeclaration,
                 SyntaxKind.EnumDeclaration,
                 SyntaxKind.StructDeclaration,
-                SyntaxKind.ClassDeclaration);
-            //context.RegisterCompilationStartAction(c => HandleCompilationStartAction(c));
+                SyntaxKind.ClassDeclaration,
+            };
         }
 
         protected virtual bool ShouldHandleOperation(OperationAnalysisContext context)
