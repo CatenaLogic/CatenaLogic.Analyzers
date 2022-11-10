@@ -11,7 +11,7 @@
         private readonly static string HandledNamespace = "Helper";
         private readonly static string HandledNamespacePlural = "Helpers";
 
-        protected override void HandleNamespaceSymbol(INamespaceSymbol namespaceSymbol, SyntaxNodeAnalysisContext originalContext, ClassDeclarationSyntax classDeclarationSyntax, SyntaxTree originalSyntaxTree)
+        protected override void HandleNamespaceSymbol(INamespaceSymbol namespaceSymbol, SyntaxNodeAnalysisContext originalContext, NamespaceDeclarationSyntax namespaceDeclarationSyntaxNode, SyntaxTree originalSyntaxTree)
         {
             if (namespaceSymbol.Name.EndsWith(HandledNamespace, StringComparison.OrdinalIgnoreCase) ||
                 namespaceSymbol.Name.EndsWith(HandledNamespacePlural, StringComparison.OrdinalIgnoreCase))
@@ -21,7 +21,7 @@
                     return;
                 }
 
-                var reportLocation = namespaceSymbol.Locations.FirstOrDefault(l => l.SourceTree == classDeclarationSyntax.GetLocation().SourceTree);
+                var reportLocation = namespaceSymbol.Locations.FirstOrDefault(l => l.SourceTree == namespaceDeclarationSyntaxNode.GetLocation().SourceTree);
 
                 if (reportLocation is null)
                 {

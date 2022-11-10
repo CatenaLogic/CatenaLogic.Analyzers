@@ -1,14 +1,11 @@
 ﻿namespace CatenaLogic.Analyzers.Tests
 {
-    using System.IO;
     using Gu.Roslyn.Asserts;
     using NUnit.Framework;
 
     [TestFixture]
-    public class CL0001AnalyzerUnitTests
+    public class CL0001AnalyzerFacts
     {
-        private static readonly MethodsAnalyzer Analyzer = new MethodsAnalyzer();
-
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.CL0001_UseAsyncOverloadInsideAsyncMethods);
 
         [Test]
@@ -30,8 +27,7 @@
             }
         }
     }";
-
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, before);
+            Solution.Verify<MethodsAnalyzer>(analyzer => RoslynAssert.Diagnostics(analyzer, ExpectedDiagnostic, before));
         }
 
         [Test]
@@ -54,7 +50,7 @@
         }
     }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, before);
+            Solution.Verify<MethodsAnalyzer>(analyzer => RoslynAssert.Diagnostics(analyzer, ExpectedDiagnostic, before));
         }
 
         [Test]
@@ -79,7 +75,7 @@
         }
     }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, before);
+            Solution.Verify<MethodsAnalyzer>(analyzer => RoslynAssert.Diagnostics(analyzer, ExpectedDiagnostic, before));
         }
 
         [Test]
@@ -101,8 +97,7 @@
             }
         }
     }";
-
-            RoslynAssert.Valid(Analyzer, before);
+            Solution.Verify<MethodsAnalyzer>(analyzer => RoslynAssert.Valid(analyzer, before));
         }
 
         [Test]
@@ -126,7 +121,7 @@
         }
     }";
 
-            RoslynAssert.Valid(Analyzer, before);
+            Solution.Verify<MethodsAnalyzer>(analyzer => RoslynAssert.Valid(analyzer, before));
         }
 
 
@@ -150,7 +145,7 @@
         }
     }";
 
-            RoslynAssert.Valid(Analyzer, before);
+            Solution.Verify<MethodsAnalyzer>(analyzer => RoslynAssert.Valid(analyzer, before));
         }
 
         [Test]
@@ -158,7 +153,7 @@
         {
             var before = @"";
 
-            RoslynAssert.Valid(Analyzer, before);
+            Solution.Verify<MethodsAnalyzer>(analyzer => RoslynAssert.Valid(analyzer, before));
         }
     }
 }

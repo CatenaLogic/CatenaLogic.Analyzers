@@ -8,7 +8,7 @@
     {
         public override void HandleSyntaxNode(SyntaxNodeAnalysisContext context)
         {
-            if (context.Node is not ClassDeclarationSyntax classDeclarationSyntaxNode)
+            if (context.Node is not NamespaceDeclarationSyntax namespaceDeclarationSyntax)
             {
                 return;
             }
@@ -25,7 +25,7 @@
 
             var namespaceSymbol = context.ContainingSymbol.ContainingNamespace;
 
-            var originalSourceTree = classDeclarationSyntaxNode.GetLocation().SourceTree;
+            var originalSourceTree = namespaceDeclarationSyntax.GetLocation().SourceTree;
             if (originalSourceTree is null)
             {
                 return;
@@ -36,9 +36,9 @@
                 return;
             }
 
-            HandleNamespaceSymbol(namespaceSymbol, context, classDeclarationSyntaxNode, originalSourceTree);
+            HandleNamespaceSymbol(namespaceSymbol, context, namespaceDeclarationSyntax, originalSourceTree);
         }
 
-        protected abstract void HandleNamespaceSymbol(INamespaceSymbol namespaceSymbol, SyntaxNodeAnalysisContext originalContext, ClassDeclarationSyntax classDeclarationSyntax, SyntaxTree originalSyntaxTree);
+        protected abstract void HandleNamespaceSymbol(INamespaceSymbol namespaceSymbol, SyntaxNodeAnalysisContext originalContext, NamespaceDeclarationSyntax namespaceDeclarationSyntaxNode, SyntaxTree originalSyntaxTree);
     }
 }

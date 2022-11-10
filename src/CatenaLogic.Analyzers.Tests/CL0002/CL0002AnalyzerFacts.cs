@@ -4,10 +4,8 @@
     using NUnit.Framework;
 
     [TestFixture]
-    public class CL0002AnalyzerUnitTests
+    public class CL0002AnalyzerFacts
     {
-        private static readonly MethodsAnalyzer Analyzer = new MethodsAnalyzer();
-
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.CL0002_UseAsyncSuffixForAsyncMethods);
 
         [Test]
@@ -29,8 +27,7 @@ public class C
             }
         }
     }";
-
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, before);
+            Solution.Verify<MethodsAnalyzer>(analyzer => RoslynAssert.Diagnostics(analyzer, ExpectedDiagnostic, before));
         }
 
         [Test]
@@ -52,8 +49,7 @@ public class C
             }
         }
     }";
-
-            RoslynAssert.Valid(Analyzer, before);
+            Solution.Verify<MethodsAnalyzer>(analyzer => RoslynAssert.Valid(analyzer, before));
         }
 
         [Test]
@@ -76,7 +72,7 @@ public class C
         }
     }";
 
-            RoslynAssert.Valid(Analyzer, before);
+            Solution.Verify<MethodsAnalyzer>(analyzer => RoslynAssert.Valid(analyzer, before));
         }
 
         [Test]
@@ -102,7 +98,7 @@ class Program
         }
     }";
 
-            RoslynAssert.Valid(Analyzer, before);
+            Solution.Verify<MethodsAnalyzer>(analyzer => RoslynAssert.Valid(analyzer, before));
         }
     }
 }

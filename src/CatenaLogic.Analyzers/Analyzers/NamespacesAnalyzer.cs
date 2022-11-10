@@ -13,7 +13,8 @@
             ImmutableArray.Create(
                 Descriptors.CL0003_DontUseExtensionsNamespace, 
                 Descriptors.CL0004_DontUseInterfacesNamespace, 
-                Descriptors.CL0005_DontUseHelpersNamespace);
+                Descriptors.CL0005_DontUseHelpersNamespace,
+                Descriptors.CL0007_DontPlaceHeaderOnTopOfCodeFile);
 
         protected override OperationKind[] GetTriggerOperations()
         {

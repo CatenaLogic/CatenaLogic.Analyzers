@@ -4,10 +4,8 @@
     using NUnit.Framework;
 
     [TestFixture]
-    public class CL0006AnalyzerUnitTests
+    public class CL0006AnalyzerFacts
     {
-        private static readonly ExpressionsAnalyzer Analyzer = new ExpressionsAnalyzer();
-
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.CL0006_ConstantPatternIsRecommendedForNullCheck);
 
         [Test]
@@ -31,7 +29,7 @@ public class C
 }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, before);
+            Solution.Verify<ExpressionsAnalyzer>(analyzer => RoslynAssert.Diagnostics(analyzer, ExpectedDiagnostic, before));
         }
 
         [Test]
@@ -53,7 +51,7 @@ public class C
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, before);
+            Solution.Verify<ExpressionsAnalyzer>(analyzer => RoslynAssert.Valid(analyzer, before));
         }
 
         [Test]
@@ -73,7 +71,7 @@ public class C
     }
 }";
 
-            RoslynAssert.Valid(Analyzer, before);
+            Solution.Verify<ExpressionsAnalyzer>(analyzer => RoslynAssert.Valid(analyzer, before));
         }
     }
 }

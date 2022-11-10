@@ -4,10 +4,8 @@
     using NUnit.Framework;
 
     [TestFixture]
-    public class CL0003AnalyzerUnitTests
+    public class CL0003AnalyzerFacts
     {
-        private static readonly NamespacesAnalyzer Analyzer = new NamespacesAnalyzer();
-
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.CL0003_DontUseExtensionsNamespace);
 
         [Test]
@@ -32,7 +30,7 @@ public class C
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, before);
+            Solution.Verify<NamespacesAnalyzer>(analyzer => RoslynAssert.Diagnostics(analyzer, ExpectedDiagnostic, before));
         }
 
         [Test]
@@ -58,7 +56,7 @@ public class C
     }
 }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, before);
+            Solution.Verify<NamespacesAnalyzer>(analyzer => RoslynAssert.Diagnostics(analyzer, ExpectedDiagnostic, before));
         }
 
         [Test]
@@ -83,8 +81,7 @@ public class C
         }
     }
 }";
-
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, before);
+            Solution.Verify<NamespacesAnalyzer>(analyzer => RoslynAssert.Diagnostics(analyzer, ExpectedDiagnostic, before));
         }
 
         [Test]
@@ -109,7 +106,7 @@ public class C
         }
     }
 }";
-            RoslynAssert.Valid(Analyzer, before);
+            Solution.Verify<NamespacesAnalyzer>(analyzer => RoslynAssert.Valid(analyzer, before));
         }
     }
 }
