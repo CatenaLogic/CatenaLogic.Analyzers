@@ -10,13 +10,18 @@
 
         public override void HandleSyntaxNode(SyntaxNodeAnalysisContext context)
         {
-            if (context.Node.IsKind(SyntaxKind.NamespaceKeyword) && context.Node.HasTrailingTrivia)
+            if (context.Node.IsKind(SyntaxKind.NamespaceDeclaration) && context.Node.HasTrailingTrivia)
             {
-                var header = context.Node.GetLeadingTrivia();
-                if (header.Count > 2)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptors.CL0007_DontPlaceHeaderOnTopOfCodeFile, context.Node.GetLocation()));
-                }
+                HandleSyntaxNode(context.Node, context);
+            }
+        }
+
+        private void HandleSyntaxNode(SyntaxNode syntaxNode, SyntaxNodeAnalysisContext context)
+        {
+            var header = syntaxNode.GetLeadingTrivia();
+            if (header.Count > 2)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptors.CL0007_DontPlaceHeaderOnTopOfCodeFile, context.Node.GetLocation()));
             }
         }
     }
