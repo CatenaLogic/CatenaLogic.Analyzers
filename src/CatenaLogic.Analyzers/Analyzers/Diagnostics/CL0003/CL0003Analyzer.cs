@@ -11,33 +11,54 @@
         private readonly static string HandledNamespace = "Extension";
         private readonly static string HandledNamespacePlural = "Extensions";
 
+        private bool CanHandleIdentifier(INamespaceSymbol namespaceSymbol)
+        {
+            return namespaceSymbol.Name.EndsWith(HandledNamespace, StringComparison.OrdinalIgnoreCase) ||
+                namespaceSymbol.Name.EndsWith(HandledNamespacePlural, StringComparison.OrdinalIgnoreCase);
+        }
+
         protected override void HandleNamespaceSymbol(INamespaceSymbol namespaceSymbol, SyntaxNodeAnalysisContext originalContext, NamespaceDeclarationSyntax namespaceDeclarationSyntaxNode, SyntaxTree originalSyntaxTree)
         {
-            if (namespaceSymbol.Name.EndsWith(HandledNamespace, StringComparison.OrdinalIgnoreCase) ||
-                namespaceSymbol.Name.EndsWith(HandledNamespacePlural, StringComparison.OrdinalIgnoreCase))
+            var matchProhibited = false;
+            if (!CanHandleIdentifier(namespaceSymbol))
             {
-                if (!namespaceSymbol.OriginalDefinition.Name.EndsWith(namespaceSymbol.Name))
+                var underlyingNamespaceGroup = namespaceSymbol.GetNamespaceMembers();
+                foreach (var symbol in underlyingNamespaceGroup)
                 {
-                    return;
+                    if (CanHandleIdentifier(symbol))
+                    {
+                        matchProhibited = true;
+                        namespaceSymbol = symbol;
+                    }
                 }
-
-                var reportLocation = namespaceSymbol.Locations.FirstOrDefault(l => l.SourceTree == namespaceDeclarationSyntaxNode.GetLocation().SourceTree);
-
-                if (reportLocation is null)
-                {
-                    // Cannot locate file for report, probably metadata?
-                    return;
-                }
-
-                if (originalContext.CancellationToken.IsCancellationRequested)
-                {
-                    return;
-                }
-
-                originalContext.ReportDiagnostic(
-                    Diagnostic.Create(
-                        Descriptors.CL0003_DontUseExtensionsNamespace, reportLocation));
             }
+
+            if (!matchProhibited)
+            {
+                return;
+            }
+
+            if (!namespaceSymbol.OriginalDefinition.Name.EndsWith(namespaceSymbol.Name))
+            {
+                return;
+            }
+
+            var reportLocation = namespaceSymbol.Locations.FirstOrDefault(l => l.SourceTree == namespaceDeclarationSyntaxNode.GetLocation().SourceTree);
+
+            if (reportLocation is null)
+            {
+                // Cannot locate file for report, probably metadata?
+                return;
+            }
+
+            if (originalContext.CancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
+            originalContext.ReportDiagnostic(
+                Diagnostic.Create(
+                    Descriptors.CL0003_DontUseExtensionsNamespace, reportLocation));
         }
     }
 }
