@@ -41,7 +41,7 @@ namespace Mock.Services
             }
 
             [Test]
-            public async Task Invalid_Code_MultilineComment_Multiplelines()
+            public async Task Invalid_Code_MultilineComment_Multiplelines_Case_1()
             {
                 var before = @"
 /* --------------------------------------------------------------------------------------------------------------------
@@ -63,6 +63,54 @@ namespace Mock.Services
     /// </summary>
     public class DummyLocator : IServiceLocator
     {
+    }
+}
+";
+                Solution.Verify<NamespacesAnalyzer>(analyzer => RoslynAssert.Diagnostics(analyzer, ExpectedDiagnostic, before));
+            }
+
+            [TestCase]
+            public async Task Invalid_Code_MultilineComment_Multiplelines_Case_2() 
+            {
+                var before = @"
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file=""HttpClientExtensions.system.cs"" company=""CatenaLogic"">
+//   Copyright (c) 2008 - 2016 CatenaLogic. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+
+namespace DummyClass
+{
+    using System.Net.Http;
+    using System.Net.Http.Headers;
+    using Catel;
+
+    internal static partial class HttpClientExtensions
+    {
+        #region Methods
+        public static void AcceptGzipAndDeflate(this HttpClient httpClient)
+        {
+            Argument.IsNotNull(() => httpClient);
+
+            httpClient.AcceptGzip();
+            httpClient.AcceptDeflate();
+        }
+
+        public static void AcceptGzip(this HttpClient httpClient)
+        {
+            Argument.IsNotNull(() => httpClient);
+
+            httpClient.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue(""gzip""));
+        }
+
+        public static void AcceptDeflate(this HttpClient httpClient)
+        {
+            Argument.IsNotNull(() => httpClient);
+
+            httpClient.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue(""deflate""));
+        }
+        #endregion
     }
 }
 ";
