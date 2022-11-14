@@ -167,6 +167,34 @@ namespace Mock.Services
 
                 Solution.Verify<NamespacesAnalyzer>(analyzer => RoslynAssert.NoAnalyzerDiagnostics(analyzer, Descriptors.CL0007_DontPlaceHeaderOnTopOfCodeFile, before));
             }
+
+            [Test]
+            public async Task Invalid_Code_MultilineComment_Multiplelines()
+            {
+                var before = @"
+/* --------------------------------------------------------------------------------------------------------------------
+    file=""DummyLocator.cs"" company=""Wildgums development team""
+    Copyright (c) 2008 - 2022 Wildgums development team. All rights reserved.
+ --------------------------------------------------------------------------------------------------------------------*/
+
+namespace Mock.Services
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Threading;
+
+    /// <summary>
+    /// Default implementation of the <see cref=""IServiceLocator""/> interface.
+    /// </summary>
+    public class DummyLocator : IServiceLocator
+    {
+    }
+}";
+
+                Solution.Verify<NamespacesAnalyzer>(analyzer => RoslynAssert.NoAnalyzerDiagnostics(analyzer, Descriptors.CL0007_DontPlaceHeaderOnTopOfCodeFile, before));
+            }
         }
     }
 }

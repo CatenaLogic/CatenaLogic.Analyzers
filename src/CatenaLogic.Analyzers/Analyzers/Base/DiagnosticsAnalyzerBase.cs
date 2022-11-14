@@ -91,17 +91,17 @@
 
         protected virtual IDiagnostic ResolveAnalyzer(DiagnosticDescriptor descriptor)
         {
-            var typeName = $"CatenaLogic.Analyzers.{descriptor.Id}Analyzer";
+            var typeName = $"CatenaLogic.Analyzers.{descriptor.Id}Diagnostic";
             var type = Type.GetType(typeName);
             if (type is null)
             {
-                throw new Exception($"Cannot create analyzer from '{typeName}'");
+                throw new Exception($"Cannot create diagnostic from '{typeName}'");
             }
 
             var analyzer = Activator.CreateInstance(type) as IDiagnostic;
             if (analyzer is null)
             {
-                throw new Exception($"Cannot create analyzer from '{typeName}'");
+                throw new Exception($"Cannot create diagnostic from '{typeName}'");
             }
 
             return analyzer;

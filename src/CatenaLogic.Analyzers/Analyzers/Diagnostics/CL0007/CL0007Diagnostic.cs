@@ -1,6 +1,8 @@
 ﻿namespace CatenaLogic.Analyzers
 {
     using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -13,18 +15,18 @@
         {
             if (context.Node.IsKind(SyntaxKind.NamespaceDeclaration) && context.Node.HasLeadingTrivia)
             {
-                HandleSyntaxNode(context.Node, context);
+                HandleSyntaxNode(context.Node, context, context.CancellationToken);
             }
         }
 
-        private void HandleSyntaxNode(SyntaxNode syntaxNode, SyntaxNodeAnalysisContext context)
+        private void HandleSyntaxNode(SyntaxNode syntaxNode, SyntaxNodeAnalysisContext context, CancellationToken cancellationToken)
         {
             var header = syntaxNode.GetLeadingTrivia();
-            var textBlock = header.Where(x => !x.IsKind(SyntaxKind.EndOfLineTrivia));
+            var textBlocks = header.Where(x => !x.IsKind(SyntaxKind.EndOfLineTrivia));
 
-            if (textBlock.Any(x => x.IsKind(SyntaxKind.MultiLineCommentTrivia)))
+            if (textBlocks.Any(x => x.IsKind(SyntaxKind.MultiLineCommentTrivia)))
             {
-                var multiLineCommentTrivia = textBlock.FirstOrDefault(x => x.IsKind(SyntaxKind.MultiLineCommentTrivia));
+                var multiLineCommentTrivia = textBlocks.FirstOrDefault(x => x.IsKind(SyntaxKind.MultiLineCommentTrivia));
 
                 var fileSpan = multiLineCommentTrivia.SyntaxTree?.GetLineSpan(multiLineCommentTrivia.Span);
                 if (fileSpan.HasValue)
@@ -38,10 +40,20 @@
             }
             else
             {
-                if (textBlock.Count() < 2)
+                if (textBlocks.Count() < 2)
                 {
                     return;
                 }
+            }
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
+            if (!header.ToFullString().Contains("</copyright>"))
+            {
+                return;
             }
 
             var headerLocation = Location.Create(syntaxNode.SyntaxTree, header.FullSpan);
