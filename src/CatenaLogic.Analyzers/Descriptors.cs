@@ -59,7 +59,7 @@
            description: @"Starting with C# 7.0 the constant pattern is supported by the ""is"" keyword. Performing pattern matching with ""null"" ""is"" can be used to test whether an expression equals a null.");
 
         internal static readonly DiagnosticDescriptor CL0007_DontPlaceHeaderOnTopOfCodeFile = Create(
-            id: CL0007Analyzer.Id,
+            id: CL0007Diagnostic.Id,
             title: @"Don't place header on top of code file",
             messageFormat: @"Don't place header on top of code file",
             category: AnalyzerCategory.Text,

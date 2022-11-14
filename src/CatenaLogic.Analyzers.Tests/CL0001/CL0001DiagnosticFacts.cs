@@ -4,7 +4,7 @@
     using NUnit.Framework;
 
     [TestFixture]
-    public class CL0001AnalyzerFacts
+    public class CL0001DiagnosticFacts
     {
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.CL0001_UseAsyncOverloadInsideAsyncMethods);
 
@@ -27,6 +27,7 @@
             }
         }
     }";
+
             Solution.Verify<MethodsAnalyzer>(analyzer => RoslynAssert.Diagnostics(analyzer, ExpectedDiagnostic, before));
         }
 
@@ -97,6 +98,7 @@
             }
         }
     }";
+
             Solution.Verify<MethodsAnalyzer>(analyzer => RoslynAssert.Valid(analyzer, before));
         }
 

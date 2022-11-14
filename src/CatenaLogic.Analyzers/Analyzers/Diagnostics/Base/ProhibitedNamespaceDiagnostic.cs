@@ -4,7 +4,7 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
-    public abstract class ProhibitedNamespaceDiagnosticRule : DiagnosticRuleBase
+    public abstract class ProhibitedNamespaceDiagnostic : DiagnosticBase
     {
         public override void HandleSyntaxNode(SyntaxNodeAnalysisContext context)
         {

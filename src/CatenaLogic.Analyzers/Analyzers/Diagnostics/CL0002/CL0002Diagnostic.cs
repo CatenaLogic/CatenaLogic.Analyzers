@@ -5,7 +5,7 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
-    public class CL0002Analyzer : DiagnosticRuleBase
+    public class CL0002Diagnostic : DiagnosticBase
     {
         private const string DefaultMainMethodName = "Main";
 

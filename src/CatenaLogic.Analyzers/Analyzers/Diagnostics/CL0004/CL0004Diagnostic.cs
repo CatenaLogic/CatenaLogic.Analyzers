@@ -6,7 +6,7 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
-    public class CL0004Analyzer : ProhibitedNamespaceDiagnosticRule
+    public class CL0004Diagnostic : ProhibitedNamespaceDiagnostic
     {
         private readonly static string HandledNamespace = "Interface";
         private readonly static string HandledNamespacePlural = "Interfaces";

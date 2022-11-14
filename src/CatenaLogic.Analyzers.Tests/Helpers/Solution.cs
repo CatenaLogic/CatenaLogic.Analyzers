@@ -30,7 +30,6 @@
                 var allMetadata = transitiveMetadataReferences.Append(debugMetadataReferences)
                     .Append(systemMetadataReferences);
 
-
                 Settings.Default = Settings.Default.WithAllowedCompilerDiagnostics(AllowedCompilerDiagnostics.WarningsAndErrors)
                     .WithMetadataReferences(refs => refs.Concat(allMetadata));
             }

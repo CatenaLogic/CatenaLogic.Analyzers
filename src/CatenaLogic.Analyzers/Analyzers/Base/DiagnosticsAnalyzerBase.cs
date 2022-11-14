@@ -39,7 +39,8 @@
 
         protected virtual OperationKind[] GetTriggerOperations()
         {
-            return new[] {
+            return new[] 
+            {
                 OperationKind.AnonymousFunction,
                 OperationKind.Await,
                 OperationKind.Block,

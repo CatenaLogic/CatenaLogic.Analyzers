@@ -4,7 +4,7 @@
     using NUnit.Framework;
 
     [TestFixture]
-    public class CL0006AnalyzerFacts
+    public class CL0006DiagnosticFacts
     {
         private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.CL0006_ConstantPatternIsRecommendedForNullCheck);
 

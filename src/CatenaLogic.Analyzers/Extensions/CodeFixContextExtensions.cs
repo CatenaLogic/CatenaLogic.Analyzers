@@ -14,7 +14,6 @@
         /// <returns></returns>
         public static async Task<SyntaxToken> FindSyntaxTokenAsync(this CodeFixContext context)
         {
-
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             if (root is null)
             {

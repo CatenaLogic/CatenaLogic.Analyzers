@@ -1,13 +1,11 @@
 ﻿namespace CatenaLogic.Analyzers
 {
     using System.Linq;
-    using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.CodeAnalysis.Text;
 
-    internal class CL0007Analyzer : DiagnosticRuleBase
+    internal class CL0007Diagnostic : DiagnosticBase
     {
         public const string Id = "CL0007";
 
@@ -47,7 +45,6 @@
             }
 
             var headerLocation = Location.Create(syntaxNode.SyntaxTree, header.FullSpan);
-
             context.ReportDiagnostic(Diagnostic.Create(Descriptors.CL0007_DontPlaceHeaderOnTopOfCodeFile, headerLocation));
         }
     }

@@ -2,7 +2,7 @@
 {
     using Microsoft.CodeAnalysis.Diagnostics;
 
-    public abstract class DiagnosticRuleBase : IDiagnostic
+    public abstract class DiagnosticBase : IDiagnostic
     {
         public virtual void HandleOperation(OperationAnalysisContext context)
         {

@@ -5,7 +5,7 @@
     using NUnit.Framework;
 
     [TestFixture]
-    public class CL0007AnalyzerFacts
+    public class CL0007DiagnosticFacts
     {
         public class Reports_Diagnostic_CL0007
         {
@@ -35,8 +35,8 @@ namespace Mock.Services
     public class DummyLocator : IServiceLocator
     {
     }
-}
-";
+}";
+
                 Solution.Verify<NamespacesAnalyzer>(analyzer => RoslynAssert.Diagnostics(analyzer, ExpectedDiagnostic, before));
             }
 
@@ -84,6 +84,7 @@ namespace DummyClass
         #endregion
     }
 }";
+
                 Solution.Verify<NamespacesAnalyzer>(analyzer => RoslynAssert.Diagnostics(analyzer, ExpectedDiagnostic, before));
             }
 
@@ -113,6 +114,7 @@ namespace Mock.Services
     }
 }
 ";
+
                 Solution.Verify<NamespacesAnalyzer>(analyzer => RoslynAssert.Diagnostics(analyzer, ExpectedDiagnostic, before));
             }
         }
@@ -135,8 +137,8 @@ namespace Mock.Services
     public class DummyLocator : IServiceLocator
     {
     }
-}
-";
+}";
+
                 Solution.Verify<NamespacesAnalyzer>(analyzer => RoslynAssert.NoAnalyzerDiagnostics(analyzer, Descriptors.CL0007_DontPlaceHeaderOnTopOfCodeFile, before));
             }
 
@@ -161,8 +163,8 @@ namespace Mock.Services
     public class DummyLocator : IServiceLocator
     {
     }
-}
-";
+}";
+
                 Solution.Verify<NamespacesAnalyzer>(analyzer => RoslynAssert.NoAnalyzerDiagnostics(analyzer, Descriptors.CL0007_DontPlaceHeaderOnTopOfCodeFile, before));
             }
         }

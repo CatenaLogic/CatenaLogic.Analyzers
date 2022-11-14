@@ -18,7 +18,8 @@
 
         protected override OperationKind[] GetTriggerOperations()
         {
-            return new[] {
+            return new[] 
+            {
                 OperationKind.DeclarationPattern,
                 OperationKind.UsingDeclaration,
                 OperationKind.DeclarationExpression,
@@ -28,12 +29,19 @@
 
         protected override SymbolKind[] GetTriggerSymbols()
         {
-            return new[] { SymbolKind.Namespace };
+            return new[] 
+            { 
+                SymbolKind.Namespace 
+            };
         }
 
         protected override SyntaxKind[] GetTriggerSyntaxNodes()
         {
-            return new[] { SyntaxKind.NamespaceDeclaration, SyntaxKind.NamespaceKeyword };
+            return new[] 
+            { 
+                SyntaxKind.NamespaceDeclaration, 
+                SyntaxKind.NamespaceKeyword 
+            };
         }
 
         protected override bool ShouldHandleSyntaxNode(SyntaxNodeAnalysisContext context)
