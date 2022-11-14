@@ -72,7 +72,27 @@ namespace Mock.Services
 
         public class Reports_NoDiagnostic
         {
+            [TestCase]
+            public async Task ValidCode_NoLeadingComments()
+            {
+                var before =
+@"
+namespace Mock.Services
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
 
+    /// <summary>
+    /// Default implementation of the <see cref=""IServiceLocator""/> interface.
+    /// </summary>
+    public class DummyLocator : IServiceLocator
+    {
+    }
+}
+";
+                Solution.Verify<NamespacesAnalyzer>(analyzer => RoslynAssert.NoAnalyzerDiagnostics(analyzer, Descriptors.CL0007_DontPlaceHeaderOnTopOfCodeFile, before));
+            }
         }
     }
 }
