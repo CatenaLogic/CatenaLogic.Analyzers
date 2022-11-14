@@ -10,7 +10,7 @@
 
         public override void HandleSyntaxNode(SyntaxNodeAnalysisContext context)
         {
-            if (context.Node.IsKind(SyntaxKind.NamespaceDeclaration) && context.Node.HasTrailingTrivia)
+            if (context.Node.IsKind(SyntaxKind.NamespaceDeclaration) && context.Node.HasLeadingTrivia)
             {
                 HandleSyntaxNode(context.Node, context);
             }
