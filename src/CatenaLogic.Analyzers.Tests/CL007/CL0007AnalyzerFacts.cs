@@ -123,7 +123,32 @@ namespace Mock.Services
             public async Task ValidCode_NoLeadingComments()
             {
                 var before =
-@"
+@"namespace Mock.Services
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+
+    /// <summary>
+    /// Default implementation of the <see cref=""IServiceLocator""/> interface.
+    /// </summary>
+    public class DummyLocator : IServiceLocator
+    {
+    }
+}
+";
+                Solution.Verify<NamespacesAnalyzer>(analyzer => RoslynAssert.NoAnalyzerDiagnostics(analyzer, Descriptors.CL0007_DontPlaceHeaderOnTopOfCodeFile, before));
+            }
+
+            [TestCase]
+            public async Task ValidCode_SingleTextLine_AnyEmptyLines()
+            {
+                var before =
+@"//#define CHECK_LICENSE
+
+
+
+
 namespace Mock.Services
 {
     using System;

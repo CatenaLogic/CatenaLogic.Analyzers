@@ -1,8 +1,11 @@
 ﻿namespace CatenaLogic.Analyzers
 {
+    using System.Linq;
+    using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Text;
 
     internal class CL0007Analyzer : DiagnosticRuleBase
     {
@@ -19,10 +22,33 @@
         private void HandleSyntaxNode(SyntaxNode syntaxNode, SyntaxNodeAnalysisContext context)
         {
             var header = syntaxNode.GetLeadingTrivia();
-            if (header.Count > 2)
+            var textBlock = header.Where(x => !x.IsKind(SyntaxKind.EndOfLineTrivia));
+
+            if (textBlock.Any(x => x.IsKind(SyntaxKind.MultiLineCommentTrivia)))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptors.CL0007_DontPlaceHeaderOnTopOfCodeFile, context.Node.GetLocation()));
+                var multiLineCommentTrivia = textBlock.FirstOrDefault(x => x.IsKind(SyntaxKind.MultiLineCommentTrivia));
+
+                var fileSpan = multiLineCommentTrivia.SyntaxTree?.GetLineSpan(multiLineCommentTrivia.Span);
+                if (fileSpan.HasValue)
+                {
+                    if (fileSpan.Value.EndLinePosition.Line - fileSpan.Value.StartLinePosition.Line == 0)
+                    {
+                        // Don't match single-line comments
+                        return;
+                    }
+                }
             }
+            else
+            {
+                if (textBlock.Count() < 2)
+                {
+                    return;
+                }
+            }
+
+            var headerLocation = Location.Create(syntaxNode.SyntaxTree, header.FullSpan);
+
+            context.ReportDiagnostic(Diagnostic.Create(Descriptors.CL0007_DontPlaceHeaderOnTopOfCodeFile, headerLocation));
         }
     }
 }
