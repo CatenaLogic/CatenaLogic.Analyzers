@@ -9,6 +9,7 @@
     <Description></Description>
     <PackageTags></PackageTags>
     <SonarQubeExclude>true</SonarQubeExclude>
+    <Nullable>annotations</Nullable>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -24,10 +25,6 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0" />
     <PackageReference Include="NUnit" Version="3.13.3" PrivateAssets="all" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.3.0" PrivateAssets="all" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="NETStandard.Library" Version="2.0.3" />
   </ItemGroup>
 
   <ItemGroup>
