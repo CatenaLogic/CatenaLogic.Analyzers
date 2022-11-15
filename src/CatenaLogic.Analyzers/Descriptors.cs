@@ -67,6 +67,15 @@
             isEnabledByDefault: true,
             description: @"Don't place header on top of code file.");
 
+        internal static readonly DiagnosticDescriptor CL0008_DoUseThrowIfNullForArgumentCheck = Create(
+            id: CL0008Diagnostic.Id,
+            title: "Use ArgumentNullException.ThrowIfNull",
+            messageFormat: "Use ArgumentNullException.ThrowIfNull",
+            category: AnalyzerCategory.Argument,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: @"Starting from .NET 6 use new ArgumentNullException.ThrowIfNull method instead of Catel.Argument.");
+
         /// <summary>
         /// Create a DiagnosticDescriptor, which provides description about a <see cref="T:Microsoft.CodeAnalysis.Diagnostic" />.
         /// NOTE: For localizable <paramref name="title" />, <paramref name="description" /> and/or <paramref name="messageFormat" />,

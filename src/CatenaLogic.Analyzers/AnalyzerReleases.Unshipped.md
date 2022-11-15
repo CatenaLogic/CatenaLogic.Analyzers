@@ -11,3 +11,4 @@ CL0004 | CatenaLogic.Analyzers.Namespace | Warning | Don't use "Interfaces" name
 CL0005 | CatenaLogic.Analyzers.Namespace | Warning | Don't use ""Helpers"" namespace for helper classes
 CL0006 | CatenaLogic.Analyzers.Expression | Warning | Using "is" statement inside null comparison expression is recommended style
 CL0007 | CatenaLogic.Analyzers.Text | Warning | Don't place header on top of code file
+CL0008 | CatenaLogic.Analyzers.Argument | Warning | Use ArgumentNullException.ThrowIfNull
