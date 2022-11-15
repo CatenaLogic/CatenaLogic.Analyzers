@@ -7,5 +7,7 @@
         internal const string Expression = "CatenaLogic.Analyzers.Expression";
         internal const string Argument = "CatenaLogic.Analyzers.Argument";
         internal const string Text = "CatenaLogic.Analyzers.Text";
+        internal const string Variable = "CatenaLogic.Analyzers.Variable";
+        internal const string Exception = "CatenaLogic.Analyzers.Exception";
     }
 }
