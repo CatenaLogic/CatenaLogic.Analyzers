@@ -3,12 +3,11 @@
     using System;
     using System.Linq;
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
     using NUnit.Framework;
 
     internal static class Solution
     {
-        internal static void Verify<TAnalyzer>(Action<TAnalyzer> assertAction) 
+        internal static void Verify<TAnalyzer>(Action<TAnalyzer> assertAction)
             where TAnalyzer : DiagnosticAnalyzerBase
         {
             var analyzer = Activator.CreateInstance<TAnalyzer>();

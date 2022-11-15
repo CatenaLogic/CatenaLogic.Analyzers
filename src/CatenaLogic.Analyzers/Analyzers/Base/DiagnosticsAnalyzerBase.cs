@@ -45,7 +45,7 @@
                 OperationKind.Await,
                 OperationKind.Block,
                 OperationKind.ExpressionStatement,
-                OperationKind.Invocation
+                OperationKind.Invocation,
             };
         }
 
