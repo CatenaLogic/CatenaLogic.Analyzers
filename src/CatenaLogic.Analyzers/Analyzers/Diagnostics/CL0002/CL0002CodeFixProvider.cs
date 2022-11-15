@@ -63,7 +63,7 @@
                 return solution;
             }
 
-            var root = await document.GetSyntaxRootAsync();
+            var root = await document.GetSyntaxRootAsync(cancellationToken);
             if (root is null)
             {
                 return solution;
@@ -80,7 +80,10 @@
                 return solution;
             }
 
-            var modifiedSolution = await Renamer.RenameSymbolAsync(solution, methodSymbol, methodSymbol.Name + "Async", solution.Workspace.Options, cancellationToken);
+            var asyncMethodRenameOptions = new SymbolRenameOptions(RenameOverloads: true, RenameInStrings: true, RenameInComments: true);
+
+            var modifiedSolution = await Renamer.RenameSymbolAsync(solution, methodSymbol, asyncMethodRenameOptions, $"{methodSymbol.Name}Async", cancellationToken);
+            
             return modifiedSolution;
         }
     }

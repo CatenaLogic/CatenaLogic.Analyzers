@@ -6,7 +6,7 @@
     using Microsoft.CodeAnalysis.Diagnostics;
     using System.Linq;
 
-    public class CL0001Analyzer : AnalyzerBase
+    public class CL0001Diagnostic : DiagnosticBase
     {
         public override void HandleSyntaxNode(SyntaxNodeAnalysisContext context)
         {

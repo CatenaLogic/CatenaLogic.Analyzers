@@ -24,17 +24,11 @@
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            if (root is null)
+            var diagnosticToken = await context.FindSyntaxTokenAsync().ConfigureAwait(false);
+            if (diagnosticToken == default)
             {
                 return;
             }
-
-            var diagnostic = context.Diagnostics.First();
-            var diagnosticSpan = diagnostic.Location.SourceSpan;
-
-            // Find the expression token identified by the diagnostic.
-            var diagnosticToken = root.FindToken(diagnosticSpan.Start);
 
             if (context.CancellationToken.IsCancellationRequested)
             {
@@ -51,7 +45,7 @@
             // Register a code action that will invoke the fix.
             context.RegisterCodeFix(
               CodeAction.Create(Title, c =>
-              FixNullEqualityCheckAsync(context.Document, equalsExpression, diagnosticToken.Kind(), c), equivalenceKey: Title), diagnostic);
+              FixNullEqualityCheckAsync(context.Document, equalsExpression, diagnosticToken.Kind(), c), equivalenceKey: Title), context.Diagnostics);
         }
 
         private async Task<Document> FixNullEqualityCheckAsync(Document document, BinaryExpressionSyntax expresssionSyntax, SyntaxKind tokenKind, CancellationToken cancellationToken)

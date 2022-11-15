@@ -4,24 +4,21 @@
     using NUnit.Framework;
 
     [TestFixture]
-    public class CL0003AnalyzerUnitTests
+    public class CL0002DiagnosticFacts
     {
-        private static readonly NamespacesAnalyzer Analyzer = new NamespacesAnalyzer();
-
-        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.CL0003_DontUseExtensionsNamespace);
+        private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.CL0002_UseAsyncSuffixForAsyncMethods);
 
         [Test]
         public void Invalid_Code_01()
         {
             var before = @"
-namespace CatenaLogic.Analyzers.↓Extensions
-{
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
 public class C
 {
-    public async Task MyMethod()
+    public async Task ↓MyMethod()
     {
         using (var fileStream = File.OpenRead(""filename""))
         {
@@ -29,77 +26,22 @@ public class C
                 var text = await reader.ReadToEndAsync();
             }
         }
-    }
-}";
+    }";
 
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, before);
+            Solution.Verify<MethodsAnalyzer>(analyzer => RoslynAssert.Diagnostics(analyzer, ExpectedDiagnostic, before));
         }
 
         [Test]
-        // Long namespaces
-        public void Invalid_Code_02()
-        {
-            var before = @"
-namespace CatenaLogic.Analyzers.Analyzers2.Analyzers3.Analyzers4.↓Extensions
-{
-using System.IO;
-using System.Threading.Tasks;
-
-public class C
-{
-    public async Task MyMethod()
-    {
-        using (var fileStream = File.OpenRead(""filename""))
-        {
-                var reader = new StreamReader(fileStream);
-                var text = await reader.ReadToEndAsync();
-            }
-        }
-    }
-}";
-
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, before);
-        }
-
-        [Test]
-        // Not-nested name
-        public void Invalid_Code_03()
-        {
-            var before = @"
-namespace ↓Extension
-{
-using System.IO;
-using System.Threading.Tasks;
-
-public class C
-{
-    public async Task MyMethod()
-    {
-        using (var fileStream = File.OpenRead(""filename""))
-        {
-                var reader = new StreamReader(fileStream);
-                var text = await reader.ReadToEndAsync();
-            }
-        }
-    }
-}";
-
-            RoslynAssert.Diagnostics(Analyzer, ExpectedDiagnostic, before);
-        }
-
-        [Test]
-        // Not-nested name
         public void Valid_Code_01()
         {
             var before = @"
-namespace ExtendedAnalyzers
-{
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
 public class C
 {
-    public async Task MyMethod()
+    public async Task MyMethodAsync()
     {
         using (var fileStream = File.OpenRead(""filename""))
         {
@@ -107,9 +49,58 @@ public class C
                 var text = await reader.ReadToEndAsync();
             }
         }
-    }
-}";
-            RoslynAssert.Valid(Analyzer, before);
+    }";
+
+            Solution.Verify<MethodsAnalyzer>(analyzer => RoslynAssert.Valid(analyzer, before));
+        }
+
+        [Test]
+        public void Valid_Code_02()
+        {
+            var before = @"
+using System;
+using System.IO;
+using System.Threading.Tasks;
+
+public class C
+{
+    public async void MyMethod()
+    {
+        using (var fileStream = File.OpenRead(""filename""))
+        {
+                var reader = new StreamReader(fileStream);
+                var text = await reader.ReadToEndAsync();
+            }
+        }
+    }";
+
+            Solution.Verify<MethodsAnalyzer>(analyzer => RoslynAssert.Valid(analyzer, before));
+        }
+
+        [Test]
+        // Ingore Main check
+        public void Valid_Code_03()
+        {
+            var before = @"
+using System;
+using System.IO;
+using System.Threading.Tasks;
+
+class Program
+    {
+        static async Task Main(string[] args)
+        {
+            Console.WriteLine(""Hello World!"");
+
+            using (var fileStream = File.OpenRead(""filename""))
+            {
+                var reader = new StreamReader(fileStream);
+                var text = await reader.ReadToEndAsync();
+            }
+        }
+    }";
+
+            Solution.Verify<MethodsAnalyzer>(analyzer => RoslynAssert.Valid(analyzer, before));
         }
     }
 }
