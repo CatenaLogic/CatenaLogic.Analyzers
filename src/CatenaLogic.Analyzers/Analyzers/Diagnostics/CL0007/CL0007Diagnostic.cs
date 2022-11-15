@@ -51,7 +51,8 @@
                 return;
             }
 
-            if (!header.ToFullString().Contains("</copyright>"))
+            var headerText = header.ToFullString();
+            if (!headerText.Contains("</copyright>") && !headerText.Contains("<copyright"))
             {
                 return;
             }
