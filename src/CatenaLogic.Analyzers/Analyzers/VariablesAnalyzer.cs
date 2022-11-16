@@ -1,5 +1,6 @@
 ﻿namespace CatenaLogic.Analyzers
 {
+    using System;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -10,13 +11,18 @@
     {
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
-            ImmutableArray.Create(Descriptors.CL0008_DoUseThrowIfNullForArgumentCheck);
+            ImmutableArray.Create(Descriptors.CL0009_StringEmptyIsRecommended);
 
         protected override OperationKind[] GetTriggerOperations()
         {
             return new[]
              {
                 OperationKind.Invocation,
+                OperationKind.VariableDeclaration,
+                OperationKind.VariableDeclarationGroup,
+                OperationKind.VariableDeclarator,
+                OperationKind.DefaultValue,
+                OperationKind.Literal,
             };
         }
 
@@ -24,8 +30,10 @@
         {
             return new[]
             {
-                SyntaxKind.InvocationExpression,
-                SyntaxKind.ExpressionStatement,
+                SyntaxKind.LocalDeclarationStatement,
+                SyntaxKind.VariableDeclaration,
+                SyntaxKind.VariableDeclarator,
+                SyntaxKind.StringLiteralExpression,
             };
         }
 
@@ -34,11 +42,17 @@
             return new[]
             {
                 SymbolKind.Local,
-                SymbolKind.Method,
+                SymbolKind.Field,
+                SymbolKind.Parameter,
             };
         }
 
         protected override bool ShouldHandleSyntaxNode(SyntaxNodeAnalysisContext context)
+        {
+            return false;
+        }
+
+        protected override bool ShouldHandleOperation(OperationAnalysisContext context)
         {
             return true;
         }

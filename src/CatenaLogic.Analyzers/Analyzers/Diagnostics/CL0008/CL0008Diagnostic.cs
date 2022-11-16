@@ -43,7 +43,7 @@
                 return;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptors.CL0008_DoUseThrowIfNullForArgumentCheck, syntaxNode.GetLocation(), "zz"));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptors.CL0008_DoUseThrowIfNullForArgumentCheck, syntaxNode.GetLocation()));
         }
     }
 }

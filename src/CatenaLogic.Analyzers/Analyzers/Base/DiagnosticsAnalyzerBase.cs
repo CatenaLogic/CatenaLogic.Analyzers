@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -25,21 +26,30 @@
 
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterOperationAction(
-                c => HandleOperationAction(c),
-                GetTriggerOperations());
-            context.RegisterSymbolAction(
-                c => HandleSymbolAction(c),
-                GetTriggerSymbols());
-            context.RegisterSyntaxNodeAction(
-                c => HandleSyntaxNodeAction(c),
-                GetTriggerSyntaxNodes());
+
+            var operations = GetTriggerOperations();
+            if (operations.Any())
+            {
+                context.RegisterOperationAction(c => HandleOperationAction(c), operations);
+            }
+
+            var symbols = GetTriggerSymbols();
+            if (symbols.Any())
+            {
+                context.RegisterSymbolAction(c => HandleSymbolAction(c), symbols);
+            }
+
+            var syntaxes = GetTriggerSyntaxNodes();
+            if (syntaxes.Any())
+            {
+                context.RegisterSyntaxNodeAction(c => HandleSyntaxNodeAction(c), syntaxes);
+            }
         }
 
 
         protected virtual OperationKind[] GetTriggerOperations()
         {
-            return new[] 
+            return new[]
             {
                 OperationKind.AnonymousFunction,
                 OperationKind.Await,

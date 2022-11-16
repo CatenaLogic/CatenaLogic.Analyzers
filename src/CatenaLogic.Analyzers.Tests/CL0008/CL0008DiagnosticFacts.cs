@@ -22,7 +22,7 @@ namespace ConsoleApp1
     {
         public Program(object arg)
         {
-            Argument.IsNotNull(() => arg);
+            ↓Argument.IsNotNull(() => arg);
         }
     }
 }";
@@ -58,8 +58,6 @@ namespace ConsoleApp1
 
         public class Reports_NoDiagnostic
         {
-            private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.CL0008_DoUseThrowIfNullForArgumentCheck);
-
             [TestCase]
             public void ValidCode_ArgumentNullException_ThrowIfNull()
             {
