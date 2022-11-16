@@ -52,7 +52,7 @@
         /// <param name="invocationExpressionSyntax"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        private async Task<Document> FixAsync(Document document, InvocationExpressionSyntax invocationExpressionSyntax, CancellationToken cancellationToken)
+        private static async Task<Document> FixAsync(Document document, InvocationExpressionSyntax invocationExpressionSyntax, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             if (root is null)
@@ -87,7 +87,7 @@
         }
 
 
-        private string[] GetArgumentNames(InvocationExpressionSyntax invocationExpressionSyntax)
+        private static string[] GetArgumentNames(InvocationExpressionSyntax invocationExpressionSyntax)
         {
             var argumentList = invocationExpressionSyntax.ChildNodes().FirstOrDefault(x => x.IsKind(SyntaxKind.ArgumentList)) as ArgumentListSyntax;
             if (argumentList is null)
@@ -97,7 +97,7 @@
 
             var argumentNames = argumentList.Arguments.Select(x =>
             {
-                if (x.ChildNodes().FirstOrDefault(x => x.IsKind(SyntaxKind.IdentifierName)) is IdentifierNameSyntax identifierNameSyntax)
+                if (x.DescendantNodes().FirstOrDefault(x => x.IsKind(SyntaxKind.IdentifierName)) is IdentifierNameSyntax identifierNameSyntax)
                 {
                     return identifierNameSyntax.Identifier.ValueText;
                 }

@@ -44,7 +44,7 @@
               FixAsync(context.Document, namespaceSyntax, c), equivalenceKey: Title), context.Diagnostics);
         }
 
-        private async Task<Document> FixAsync(Document document, NamespaceDeclarationSyntax namespaceSyntax, CancellationToken cancellationToken)
+        private static async Task<Document> FixAsync(Document document, NamespaceDeclarationSyntax namespaceSyntax, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             if (root is null)
