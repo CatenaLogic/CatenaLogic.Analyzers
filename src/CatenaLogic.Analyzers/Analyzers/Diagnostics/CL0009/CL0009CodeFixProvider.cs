@@ -1,14 +1,18 @@
 ﻿namespace CatenaLogic.Analyzers
 {
-    using System;
     using System.Collections.Immutable;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CL0009CodeFixProvider))]
     internal class CL0009CodeFixProvider : CodeFixProvider
     {
+        public const string Title = "Replace with String.Empty";
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(Descriptors.CL0009_StringEmptyIsRecommended.Id);
 
         public override FixAllProvider? GetFixAllProvider()
@@ -16,9 +20,41 @@
             return WellKnownFixAllProviders.BatchFixer;
         }
 
-        public override Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            throw new NotImplementedException();
+            var diagnosticNode = await context.FindSyntaxNodeAsync().ConfigureAwait(false);
+            if (diagnosticNode == default)
+            {
+                return;
+            }
+
+            if (context.CancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
+            if (diagnosticNode is not LiteralExpressionSyntax literal || !literal.IsKind(SyntaxKind.StringLiteralExpression))
+            {
+                return;
+            }
+
+            context.RegisterCodeFix(
+              CodeAction.Create(Title, cancellationToken =>
+              FixAsync(context.Document, literal, cancellationToken), equivalenceKey: Title), context.Diagnostics);
+        }
+
+        private async Task<Document> FixAsync(Document document, LiteralExpressionSyntax literalSyntax, CancellationToken cancellationToken)
+        {
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            if (root is null)
+            {
+                return document;
+            }
+
+            var stringEmpty = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.IdentifierName("string"), SyntaxFactory.IdentifierName("Empty"));
+            var updatedRoot = root.ReplaceNode(literalSyntax, stringEmpty);
+
+            return document.WithSyntaxRoot(updatedRoot);
         }
     }
 }

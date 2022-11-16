@@ -73,11 +73,11 @@
             }
 
             var parameters = new SeparatedSyntaxList<ArgumentSyntax>().AddRange(
-                new ArgumentSyntax[] 
-                { 
+                new ArgumentSyntax[]
+                {
                     SyntaxFactory.Argument(SyntaxFactory.IdentifierName(isNotNullParameter))
                 });
-            
+
             var throwIfNullInvocation = SyntaxFactory.InvocationExpression(SyntaxFactory.IdentifierName("ArgumentNullException.ThrowIfNull"))
                 .WithArgumentList(SyntaxFactory.ArgumentList().WithArguments(parameters));
 

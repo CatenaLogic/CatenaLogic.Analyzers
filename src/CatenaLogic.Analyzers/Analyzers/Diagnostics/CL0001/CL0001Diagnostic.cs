@@ -1,10 +1,10 @@
 ﻿namespace CatenaLogic.Analyzers
 {
+    using System.Linq;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using System.Linq;
 
     public class CL0001Diagnostic : DiagnosticBase
     {

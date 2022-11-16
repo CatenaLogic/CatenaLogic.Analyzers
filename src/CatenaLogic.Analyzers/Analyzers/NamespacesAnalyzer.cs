@@ -11,14 +11,14 @@
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(
-                Descriptors.CL0003_DontUseExtensionsNamespace, 
-                Descriptors.CL0004_DontUseInterfacesNamespace, 
+                Descriptors.CL0003_DontUseExtensionsNamespace,
+                Descriptors.CL0004_DontUseInterfacesNamespace,
                 Descriptors.CL0005_DontUseHelpersNamespace,
                 Descriptors.CL0007_DontPlaceHeaderOnTopOfCodeFile);
 
         protected override OperationKind[] GetTriggerOperations()
         {
-            return new[] 
+            return new[]
             {
                 OperationKind.DeclarationPattern,
                 OperationKind.UsingDeclaration,
@@ -29,18 +29,18 @@
 
         protected override SymbolKind[] GetTriggerSymbols()
         {
-            return new[] 
-            { 
-                SymbolKind.Namespace 
+            return new[]
+            {
+                SymbolKind.Namespace
             };
         }
 
         protected override SyntaxKind[] GetTriggerSyntaxNodes()
         {
-            return new[] 
-            { 
-                SyntaxKind.NamespaceDeclaration, 
-                SyntaxKind.NamespaceKeyword 
+            return new[]
+            {
+                SyntaxKind.NamespaceDeclaration,
+                SyntaxKind.NamespaceKeyword
             };
         }
 

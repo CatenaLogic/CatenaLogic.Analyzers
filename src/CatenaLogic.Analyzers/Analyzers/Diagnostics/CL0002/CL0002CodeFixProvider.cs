@@ -83,7 +83,7 @@
             var asyncMethodRenameOptions = new SymbolRenameOptions(RenameOverloads: true, RenameInStrings: true, RenameInComments: true);
 
             var modifiedSolution = await Renamer.RenameSymbolAsync(solution, methodSymbol, asyncMethodRenameOptions, $"{methodSymbol.Name}Async", cancellationToken);
-            
+
             return modifiedSolution;
         }
     }
