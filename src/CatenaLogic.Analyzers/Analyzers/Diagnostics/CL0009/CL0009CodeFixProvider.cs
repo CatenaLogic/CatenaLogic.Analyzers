@@ -28,12 +28,12 @@
                 return;
             }
 
-            if (context.CancellationToken.IsCancellationRequested)
+            if (diagnosticNode is not LiteralExpressionSyntax literal || !literal.IsKind(SyntaxKind.StringLiteralExpression))
             {
                 return;
             }
 
-            if (diagnosticNode is not LiteralExpressionSyntax literal || !literal.IsKind(SyntaxKind.StringLiteralExpression))
+            if (context.CancellationToken.IsCancellationRequested)
             {
                 return;
             }

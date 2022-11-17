@@ -70,15 +70,19 @@
                 }
             }
 
+            var listOfLocations = new List<Location>();
+
             // Report diagnostics:
             foreach (var pair in regionPairs)
             {
                 var beginRegionLocation = pair.Item1.GetLocation();
                 var endRegionLocation = pair.Item2.GetLocation();
 
-                context.ReportDiagnostic(Diagnostic.Create(Descriptors.CL0010_DontKeepClassMemberRegions, beginRegionLocation));
-                context.ReportDiagnostic(Diagnostic.Create(Descriptors.CL0010_DontKeepClassMemberRegions, endRegionLocation));
+                listOfLocations.Add(beginRegionLocation);
+                listOfLocations.Add(endRegionLocation);
             }
+
+            context.ReportDiagnostic(Diagnostic.Create(Descriptors.CL0010_DontKeepClassMemberRegions, context.Node.GetLocation(), additionalLocations: listOfLocations));
         }
 
         private string? GetRegionNameFromSyntaxTrivia(SyntaxTrivia syntaxTrivia)
