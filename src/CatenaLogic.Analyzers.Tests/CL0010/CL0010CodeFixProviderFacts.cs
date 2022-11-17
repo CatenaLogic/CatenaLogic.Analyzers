@@ -55,7 +55,7 @@ namespace ConsoleApp1
 
     internal class Program
     {
-        private readonly string foo1 = "";
+        private readonly string foo1 = """";
 
 
         public Program(object arg)
@@ -73,7 +73,7 @@ namespace ConsoleApp1
     }
 }"; ;
 
-                Solution.Verify<ClassesAnalyzer>(analyzer => RoslynAssert.FixAll(analyzer, Fixer, before, after));
+                Solution.Verify<ClassesAnalyzer>(analyzer => RoslynAssert.CodeFix(analyzer, Fixer, before, after));
             }
         }
     }

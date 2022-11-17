@@ -71,6 +71,10 @@
             }
 
             var listOfLocations = new List<Location>();
+            if (!regionPairs.Any())
+            {
+                return;
+            }
 
             // Report diagnostics:
             foreach (var pair in regionPairs)

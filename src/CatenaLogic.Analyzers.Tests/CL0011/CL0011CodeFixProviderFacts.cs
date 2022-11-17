@@ -17,26 +17,36 @@
                 var before = @"
 namespace ConsoleApp1
 {
-    using Catel;
-
     internal class Program
     {
-        public Program(object arg)
+        public Program()
         {
-            ↓Argument.IsNotNull(() => arg);
+
+        }
+
+        public async Task MakeError()
+        {
+            ↓throw new InvalidOperationException(""Some invalid operation"", new Exception(""This is error!""));
         }
     }
 }";
                 var after = @"
 namespace ConsoleApp1
 {
-    using Catel;
+    using Catel.Logging;
 
     internal class Program
     {
-        public Program(object arg)
+        private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
+        public Program()
         {
-            ArgumentNullException.ThrowIfNull(arg);
+
+        }
+
+        public async Task MakeError()
+        {
+            throw Log.ErrorAndCreateException<InvalidOperationException>(""Some invalid operation"", new Exception(""This is error!""));
         }
     }
 }";

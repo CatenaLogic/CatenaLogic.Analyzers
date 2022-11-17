@@ -2,23 +2,157 @@
 {
     using System;
     using System.Collections.Immutable;
+    using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
+    using Gu.Roslyn.AnalyzerExtensions;
+    using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Editing;
+    using SF = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CL0011CodeFixProvider))]
     internal class CL0011CodeFixProvider : CodeFixProvider
     {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(Descriptors.CL0008_DoUseThrowIfNullForArgumentCheck.Id);
+        public const string Title = "Replace with Log.ErrorAndCreateException";
+        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(Descriptors.CL0011_ProvideCatelLogOnThrowingException.Id);
 
         public override FixAllProvider? GetFixAllProvider()
         {
             return WellKnownFixAllProviders.BatchFixer;
         }
 
-        public override Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            throw new NotImplementedException();
+            var diagnosticNode = await context.FindSyntaxNodeAsync().ConfigureAwait(false);
+            if (diagnosticNode == default)
+            {
+                return;
+            }
+
+            if (context.CancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
+            context.RegisterCodeFix(
+              CodeAction.Create(Title, cancellationToken =>
+              FixAsync(context.Document, diagnosticNode, cancellationToken), equivalenceKey: Title), context.Diagnostics);
+        }
+
+        private static async Task<Document> FixAsync(Document document, SyntaxNode diagnosticNode, CancellationToken cancellationToken)
+        {
+            if (diagnosticNode is not ThrowStatementSyntax throwStatement)
+            {
+                return document;
+            }
+
+            var exceptionCreationSyntax = throwStatement.ChildNodes().FirstOrDefault(x => x is ObjectCreationExpressionSyntax) as ObjectCreationExpressionSyntax;
+            if (exceptionCreationSyntax is null)
+            {
+                return document;
+            }
+
+            var arguments = exceptionCreationSyntax.ArgumentList;
+            var logErrorExpression = SF.InvocationExpression(SF.ParseExpression($"Log.ErrorAndCreateException<{exceptionCreationSyntax.Type}>"));
+
+            if (arguments is not null)
+            {
+                logErrorExpression = logErrorExpression.WithArgumentList(arguments);
+            }
+
+            var documentEditor = await DocumentEditor.CreateAsync(document, cancellationToken);
+            documentEditor.ReplaceNode(exceptionCreationSyntax, logErrorExpression);
+
+            document = documentEditor.GetChangedDocument();
+
+            var sm = await document.GetSemanticModelAsync(cancellationToken);
+            if (sm is null)
+            {
+                return document;
+            }
+
+            var classSpan = throwStatement.FirstAncestor<ClassDeclarationSyntax>()?.FullSpan ?? default;
+
+            var classDeclaration = (await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false))?.FindNode(classSpan);
+            if (classDeclaration is null)
+            {
+                return document;
+            }
+
+            var updatedDocument = await EnsureLogStaticFieldForClassOnRootAsync(classDeclaration, sm, document, cancellationToken).ConfigureAwait(false);
+
+            return updatedDocument;
+        }
+
+        private static async Task<Document> EnsureLogStaticFieldForClassOnRootAsync(
+            SyntaxNode classDeclaration,
+            SemanticModel semantic,
+            Document document,
+            CancellationToken cancellationToken)
+        {
+            var fieldDeclaraions = classDeclaration.ChildNodes().Where(x => x.IsKind(SyntaxKind.FieldDeclaration)).ToList();
+            var classSymbol = semantic.GetDeclaredSymbol(classDeclaration, cancellationToken);
+            if (classSymbol is not INamedTypeSymbol typeSymbol)
+            {
+                return document;
+            }
+
+            if (typeSymbol.TryFindFirstMember<IFieldSymbol>(field =>
+            {
+                return field.IsStatic && field.Type.Name == "ILog" && field.Name == "Log";
+            }, out var logStaticField))
+            {
+                return document;
+            }
+
+            // Create Log member
+            var logStaticFieldSyntax = SF.FieldDeclaration(
+                SF.VariableDeclaration(SF.ParseTypeName("ILog"),
+                SF.SeparatedList(new[]
+                {
+                    SF.VariableDeclarator(SF.Identifier("Log"))
+                    .WithInitializer(SF.EqualsValueClause(SF.InvocationExpression(SF.IdentifierName("LogManager.GetCurrentClassLogger"))))
+                })))
+                .AddModifiers(
+                SF.Token(SyntaxKind.PrivateKeyword), SF.Token(SyntaxKind.StaticKeyword), SF.Token(SyntaxKind.ReadOnlyKeyword));
+
+            var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+            editor.InsertMembers(classDeclaration, 0, new[]
+{
+                logStaticFieldSyntax
+            });
+
+            if (classDeclaration.Parent is null)
+            {
+                return document;
+            }
+
+            var root = editor.GetChangedRoot();
+            var namespaceDeclaration = root.DescendantNodes().FirstOrDefault(x => x is NamespaceDeclarationSyntax) as NamespaceDeclarationSyntax;
+
+            NamespaceDeclarationSyntax? updatedNamespace = null;
+            // Note: we expect using are part of NamespaceDeclaration, not a root
+            if (namespaceDeclaration is null)
+            {
+                return document;
+            }
+
+            if (!namespaceDeclaration.Usings.Any(x => string.Equals("Catel.Logging", x.Name.ToFullString())))
+            {
+                updatedNamespace = namespaceDeclaration.AddUsings(SF.UsingDirective(SF.ParseName("Catel.Logging")));
+            }
+
+            if (updatedNamespace is not null)
+            {
+                editor.ReplaceNode(classDeclaration.Parent, updatedNamespace);
+            }
+
+            return editor.GetChangedDocument();
         }
     }
 }
