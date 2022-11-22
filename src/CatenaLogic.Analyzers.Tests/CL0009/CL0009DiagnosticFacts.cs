@@ -83,6 +83,24 @@ namespace ConsoleApp1
             }
 
             [TestCase]
+            public void ValidCode_CompileTime_Constant_Attribute_Argument()
+            {
+                var before = @"
+namespace ConsoleApp1
+{
+    using System.ComponentModel;
+
+    public class ExtensionsCommandLineContext
+    {
+        [DisplayName(displayName: """")]
+        public bool NoExtensions { get; set; }
+    }
+}";
+
+                Solution.Verify<VariablesAnalyzer>(analyzer => RoslynAssert.NoAnalyzerDiagnostics(analyzer, Descriptors.CL0009_StringEmptyIsRecommended, before));
+            }
+
+            [TestCase]
             public void ValidCode_CompileTime_Constant_Field()
             {
                 var before = @"

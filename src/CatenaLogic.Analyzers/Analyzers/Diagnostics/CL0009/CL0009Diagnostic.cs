@@ -3,6 +3,7 @@
     using System.Linq;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Operations;
@@ -37,13 +38,17 @@
                     return;
                 }
 
-                if (context.Operation.Parent is IFieldInitializerOperation fieldInitializer)
+                if (operation.Parent is IFieldInitializerOperation fieldInitializer)
                 {
                     var fieldSymbol = fieldInitializer.InitializedFields.FirstOrDefault();
                     if (fieldSymbol is null || fieldSymbol.IsConst)
                     {
                         return;
                     }
+                }
+                if (operation.Parent.Syntax.IsKind(SyntaxKind.Attribute))
+                {
+                    return;
                 }
             }
 
