@@ -13,5 +13,5 @@ CL0006  | CatenaLogic.Analyzers.Expression | Warning | Using "is" statement insi
 CL0007  | CatenaLogic.Analyzers.Text | Warning | Don't place header on top of code file
 CL0008  | CatenaLogic.Analyzers.Argument | Warning | Use ArgumentNullException.ThrowIfNull for argument check
 CL0009  | CatenaLogic.Analyzers.Variable | Warning | Use String.Empty
-CL0010  | CatenaLogic.Analyzers.Text | Warning | Don't keep class member regions
+CL0010 | CatenaLogic.Analyzers.Text | Disabled | Descriptors
 CL0011  | CatenaLogic.Analyzers.Exception | Warning | Provide log on throwing exception

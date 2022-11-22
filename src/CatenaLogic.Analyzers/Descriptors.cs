@@ -91,7 +91,7 @@
             messageFormat: "Don't use #region for organizing class members",
             category: AnalyzerCategory.Text,
             defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: true,
+            isEnabledByDefault: false,
             description: "Don't use #region for organizing class members.");
 
         internal static readonly DiagnosticDescriptor CL0011_ProvideCatelLogOnThrowingException = Create(
