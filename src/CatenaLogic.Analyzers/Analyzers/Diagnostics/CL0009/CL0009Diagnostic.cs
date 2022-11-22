@@ -36,11 +36,13 @@
             var suspectOperation = operation.Parent;
             if (!CanHandleOperation(suspectOperation))
             {
-                suspectOperation = suspectOperation?.Parent;
-                if(!CanHandleOperation(suspectOperation)) 
-                {
-                    return;
-                }
+                return;
+            }
+
+            suspectOperation = suspectOperation?.Parent;
+            if (!CanHandleOperation(suspectOperation))
+            {
+                return;
             }
 
             context.ReportDiagnostic(Diagnostic.Create(Descriptors.CL0009_StringEmptyIsRecommended, operation.Syntax.GetLocation()));
