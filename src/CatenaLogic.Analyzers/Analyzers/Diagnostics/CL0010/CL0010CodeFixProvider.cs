@@ -13,7 +13,7 @@
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CL0010CodeFixProvider))]
     internal class CL0010CodeFixProvider : CodeFixProvider
     {
-        public const string Title = "Remove region directive";
+        public const string Title = "Remove region directives";
 
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(Descriptors.CL0010_DontKeepClassMemberRegions.Id);
 

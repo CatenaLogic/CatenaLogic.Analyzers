@@ -38,6 +38,29 @@ namespace ConsoleApp1
         public class Reposts_NoDiagnostic
         {
             [TestCase]
+            public async Task ValidCode_NoMessageProvided()
+            {
+                var before = @"
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        public Program()
+        {
+
+        }
+
+        public async Task MakeError()
+        {
+            throw new InvalidOperationException();
+        }
+    }
+}";
+
+                Solution.Verify<ExceptionsAnalyzer>(analyzer => RoslynAssert.NoAnalyzerDiagnostics(analyzer, Descriptors.CL0011_ProvideCatelLogOnThrowingException, before));
+            }
+
+            [TestCase]
             public async Task ValidCode_Log_ErrorAndCreateException()
             {
                 var before = @"

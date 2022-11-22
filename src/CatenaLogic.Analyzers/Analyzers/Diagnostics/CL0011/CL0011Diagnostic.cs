@@ -24,6 +24,12 @@
                 return;
             }
 
+            var objectCreationArgumentsSyntax = objectCreationSyntax.ChildNodes().FirstOrDefault(s => s.IsKind(SyntaxKind.ArgumentList));
+            if (objectCreationArgumentsSyntax is null || (objectCreationArgumentsSyntax is ArgumentListSyntax argumentList && argumentList.Arguments.Count == 0))
+            {
+                return;
+            }
+
             context.ReportDiagnostic(Diagnostic.Create(Descriptors.CL0011_ProvideCatelLogOnThrowingException, context.Node.GetLocation()));
         }
     }
