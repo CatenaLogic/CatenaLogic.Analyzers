@@ -52,14 +52,12 @@
                 return document;
             }
 
-            var fixedNamespaceSyntax = namespaceSyntax.WithoutLeadingTrivia();
-
             if (cancellationToken.IsCancellationRequested)
             {
                 return document;
             }
 
-            var pendingRoot = root.ReplaceNode(namespaceSyntax, fixedNamespaceSyntax);
+            var pendingRoot = root.ReplaceNode(namespaceSyntax, namespaceSyntax.WithoutLeadingTrivia());
 
             return document.WithSyntaxRoot(pendingRoot);
         }

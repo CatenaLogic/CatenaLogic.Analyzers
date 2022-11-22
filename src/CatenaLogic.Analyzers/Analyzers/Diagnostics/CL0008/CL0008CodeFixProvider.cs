@@ -5,18 +5,22 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using SF = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CL0008CodeFixProvider))]
     internal class CL0008CodeFixProvider : CodeFixProvider
     {
-        public const string Title = "Replace with ArgumentNullException.ThrowIfNull";
+        private const string NameDoesNotExistInCurrentContextId = "CS0103";
+        public const string Title_CS0008 = "Replace with ArgumentNullException.ThrowIfNull";
+        public const string Title_CS0103 = "Add using System";
 
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(Descriptors.CL0008_DoUseThrowIfNullForArgumentCheck.Id);
+        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(Descriptors.CL0008_DoUseThrowIfNullForArgumentCheck.Id, NameDoesNotExistInCurrentContextId);
         public override FixAllProvider? GetFixAllProvider()
         {
             return WellKnownFixAllProviders.BatchFixer;
@@ -25,9 +29,23 @@
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var diagnosticNode = await context.FindSyntaxNodeAsync().ConfigureAwait(false);
-            if (diagnosticNode == default)
+            if (diagnosticNode is null)
             {
                 return;
+            }
+
+            if (diagnosticNode is IdentifierNameSyntax identifierNameSyntax)
+            {
+                if (identifierNameSyntax.Identifier.Text != "ArgumentNullException")
+                {
+                    return;
+                }
+
+                // Allow user to fix missed System namespace after first CodeFix
+                context.RegisterCodeFix(
+                    CodeAction.Create(Title_CS0103,
+                    cancellationToken => FixNamespaceAsync(context.Document, identifierNameSyntax, cancellationToken),
+                    equivalenceKey: Title_CS0103), context.Diagnostics);
             }
 
             if (diagnosticNode is not InvocationExpressionSyntax invocationSyntax)
@@ -41,8 +59,9 @@
             }
 
             context.RegisterCodeFix(
-              CodeAction.Create(Title, cancellationToken =>
-              FixAsync(context.Document, invocationSyntax, cancellationToken), equivalenceKey: Title), context.Diagnostics);
+              CodeAction.Create(Title_CS0008,
+              cancellationToken => FixAsync(context.Document, invocationSyntax, cancellationToken),
+              equivalenceKey: Title_CS0008), context.Diagnostics);
         }
 
         /// <summary>
@@ -75,17 +94,45 @@
             var parameters = new SeparatedSyntaxList<ArgumentSyntax>().AddRange(
                 new ArgumentSyntax[]
                 {
-                    SyntaxFactory.Argument(SyntaxFactory.IdentifierName(isNotNullParameter))
+                    SF.Argument(SF.IdentifierName(isNotNullParameter))
                 });
 
-            var throwIfNullInvocation = SyntaxFactory.InvocationExpression(SyntaxFactory.IdentifierName("ArgumentNullException.ThrowIfNull"))
-                .WithArgumentList(SyntaxFactory.ArgumentList().WithArguments(parameters));
+            var throwIfNullInvocation = SF.InvocationExpression(SF.IdentifierName("ArgumentNullException.ThrowIfNull"))
+                .WithArgumentList(SF.ArgumentList().WithArguments(parameters));
 
             var updatedRoot = root.ReplaceNode(invocationExpressionSyntax, throwIfNullInvocation);
 
             return document.WithSyntaxRoot(updatedRoot);
         }
 
+        private static async Task<Document> FixNamespaceAsync(Document document, IdentifierNameSyntax identifierNameSyntax, CancellationToken cancellationToken)
+        {
+            var containingNamespace = identifierNameSyntax.FirstAncestor<NamespaceDeclarationSyntax>();
+            if (containingNamespace is null)
+            {
+                return document;
+            }
+
+            if (containingNamespace.Usings.Any(x => string.Equals("System", x.Name.ToFullString())))
+            {
+                return document;
+            }
+
+            var updatedNamespace = containingNamespace.AddUsings(SF.UsingDirective(SF.ParseName("System")));
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return document;
+            }
+
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            if (root is null)
+            {
+                return document;
+            }
+
+            return document.WithSyntaxRoot(root.ReplaceNode(containingNamespace, updatedNamespace));
+        }
 
         private static string[] GetArgumentNames(InvocationExpressionSyntax invocationExpressionSyntax)
         {

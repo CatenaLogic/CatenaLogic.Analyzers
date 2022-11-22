@@ -29,7 +29,7 @@
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var diagnosticNode = await context.FindSyntaxNodeAsync().ConfigureAwait(false);
-            if (diagnosticNode == default)
+            if (diagnosticNode is null)
             {
                 return;
             }

@@ -19,6 +19,7 @@
         private static ImmutableArray<string> RegionsToRemove =>
             ImmutableArray.Create(
                 "constructors", "ctor", "ctors", "constructor",
+                "constants", "constant",
                 "methods", "method",
                 "fields", "field",
                 "events", "event",

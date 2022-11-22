@@ -1,7 +1,5 @@
 ﻿namespace CatenaLogic.Analyzers
 {
-    using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
@@ -10,7 +8,6 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Text;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CL0010CodeFixProvider))]
@@ -28,7 +25,7 @@
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var diagnosticNode = await context.FindSyntaxNodeAsync().ConfigureAwait(false);
-            if (diagnosticNode == default)
+            if (diagnosticNode is null)
             {
                 return;
             }
@@ -46,10 +43,10 @@
 
             context.RegisterCodeFix(
               CodeAction.Create(Title, cancellationToken =>
-              FixAsync(context.Document, diagnosticNode, diagnostic.AdditionalLocations, cancellationToken), equivalenceKey: Title), context.Diagnostics);
+              FixAsync(context.Document, diagnostic.AdditionalLocations, cancellationToken), equivalenceKey: Title), context.Diagnostics);
         }
 
-        private static async Task<Document> FixAsync(Document document, SyntaxNode node, IReadOnlyList<Location> locations, CancellationToken cancellationToken)
+        private static async Task<Document> FixAsync(Document document, IReadOnlyList<Location> locations, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             if (root is null)

@@ -43,6 +43,37 @@ namespace ConsoleApp1
 
                 Solution.Verify<ArgumentsAnalyzer>(analyzer => RoslynAssert.CodeFix(analyzer, Fixer, before, after));
             }
+
+            [TestCase]
+            public void InvalidCode_CS0103()
+            {
+                var before = @"
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        public Program(object arg)
+        {
+            ↓ArgumentNullException.ThrowIfNull(arg);
+        }
+    }
+}";
+                var after = @"
+namespace ConsoleApp1
+{
+    using System;
+
+    internal class Program
+    {
+        public Program(object arg)
+        {
+            ArgumentNullException.ThrowIfNull(arg);
+        }
+    }
+}";
+
+                Solution.Verify<ArgumentsAnalyzer>(analyzer => RoslynAssert.CodeFix(Fixer, ExpectedDiagnostic.Create("CS0103"), before, after));
+            }
         }
     }
 }
