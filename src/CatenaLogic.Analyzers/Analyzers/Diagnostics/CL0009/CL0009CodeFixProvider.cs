@@ -43,7 +43,7 @@
               FixAsync(context.Document, literal, cancellationToken), equivalenceKey: Title), context.Diagnostics);
         }
 
-        private async Task<Document> FixAsync(Document document, LiteralExpressionSyntax literalSyntax, CancellationToken cancellationToken)
+        private static async Task<Document> FixAsync(Document document, LiteralExpressionSyntax literalSyntax, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             if (root is null)
