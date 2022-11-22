@@ -30,29 +30,47 @@
                 return;
             }
 
-            // Check: can be not a compile-time value
-            if (operation.Parent is not null)
+            // Ignore constant expression
+            // In some places "" should be complie-time constant, we can't use string.Empty.
+            // Çheck both parent and 1 level higher in operation tree, if value is part of conversion
+            var suspectOperation = operation.Parent;
+            if (!CanHandleOperation(suspectOperation))
             {
-                if (operation.Parent.Kind == OperationKind.ParameterInitializer)
-                {
-                    return;
-                }
-
-                if (operation.Parent is IFieldInitializerOperation fieldInitializer)
-                {
-                    var fieldSymbol = fieldInitializer.InitializedFields.FirstOrDefault();
-                    if (fieldSymbol is null || fieldSymbol.IsConst)
-                    {
-                        return;
-                    }
-                }
-                if (operation.Parent.Syntax.IsKind(SyntaxKind.Attribute))
+                suspectOperation = suspectOperation?.Parent;
+                if(!CanHandleOperation(suspectOperation)) 
                 {
                     return;
                 }
             }
 
             context.ReportDiagnostic(Diagnostic.Create(Descriptors.CL0009_StringEmptyIsRecommended, operation.Syntax.GetLocation()));
+        }
+
+        private bool CanHandleOperation(IOperation? operation)
+        {
+            if (operation is not null)
+            {
+                if (operation.Kind == OperationKind.ParameterInitializer)
+                {
+                    return false;
+                }
+
+                if (operation is IFieldInitializerOperation fieldInitializer)
+                {
+                    var fieldSymbol = fieldInitializer.InitializedFields.FirstOrDefault();
+                    if (fieldSymbol is null || fieldSymbol.IsConst)
+                    {
+                        return false;
+                    }
+                }
+
+                if (operation.Syntax.IsKind(SyntaxKind.Attribute))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private bool CanHandleSyntaxNode(LiteralExpressionSyntax? syntaxNode)
