@@ -57,8 +57,8 @@ namespace ConsoleApp1
             [TestCase]
             public void InvalidCode_NestedClass()
             {
-                var before = @"
-namespace ConsoleApp1
+                var before = 
+@"namespace ConsoleApp1
 {
     using System.Threading;
     using System.Reflection;
@@ -90,6 +90,7 @@ namespace ConsoleApp1
     {
         public Program()
         {
+
         }
 
         internal class NestedProgram

@@ -5,6 +5,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Gu.Roslyn.AnalyzerExtensions;
+    using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -124,7 +125,7 @@
             if (!namespaceDeclaration.Usings.Any(x => string.Equals("Catel.Logging", x.Name.ToFullString())))
             {
                 updatedNamespace = namespaceDeclaration.AddUsings(
-                    SF.UsingDirective(SF.ParseName("Catel.Logging")).NormalizeWhitespace()).NormalizeWhitespace();
+                    SF.UsingDirective(SF.ParseName("Catel.Logging")).NormalizeWhitespace(elasticTrivia: true).WithTrailingElasticLineFeed());
             }
 
             if (updatedNamespace is not null)
