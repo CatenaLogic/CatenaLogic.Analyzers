@@ -1,12 +1,10 @@
 ﻿namespace CatenaLogic.Analyzers
 {
-    using System;
     using System.Collections.Immutable;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Gu.Roslyn.AnalyzerExtensions;
-    using Gu.Roslyn.CodeFixExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -78,7 +76,7 @@
 
             var classSpan = throwStatement.FirstAncestor<ClassDeclarationSyntax>()?.FullSpan ?? default;
 
-            var classDeclaration = (await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false))?.FindNode(classSpan);
+            var classDeclaration = (await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false))?.FindNode(classSpan) as ClassDeclarationSyntax;
             if (classDeclaration is null)
             {
                 return document;
@@ -90,7 +88,7 @@
         }
 
         private static async Task<Document> EnsureLogStaticFieldForClassOnRootAsync(
-            SyntaxNode classDeclaration,
+            ClassDeclarationSyntax classDeclaration,
             SemanticModel semantic,
             Document document,
             CancellationToken cancellationToken)
@@ -110,28 +108,9 @@
                 return document;
             }
 
-            // Create Log member
-            var logStaticFieldSyntax = SF.FieldDeclaration(
-                SF.VariableDeclaration(SF.ParseTypeName("ILog"),
-                SF.SeparatedList(new[]
-                {
-                    SF.VariableDeclarator(SF.Identifier("Log"))
-                    .WithInitializer(SF.EqualsValueClause(SF.InvocationExpression(SF.IdentifierName("LogManager.GetCurrentClassLogger"))))
-                })))
-                .AddModifiers(
-                SF.Token(SyntaxKind.PrivateKeyword), SF.Token(SyntaxKind.StaticKeyword), SF.Token(SyntaxKind.ReadOnlyKeyword));
-
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-            editor.InsertMembers(classDeclaration, 0, new[]
-{
-                logStaticFieldSyntax
-            });
 
-            if (classDeclaration.Parent is null)
-            {
-                return document;
-            }
-
+            // Add namespace
             var root = editor.GetChangedRoot();
             var namespaceDeclaration = root.DescendantNodes().FirstOrDefault(x => x is NamespaceDeclarationSyntax) as NamespaceDeclarationSyntax;
 
@@ -144,15 +123,55 @@
 
             if (!namespaceDeclaration.Usings.Any(x => string.Equals("Catel.Logging", x.Name.ToFullString())))
             {
-                updatedNamespace = namespaceDeclaration.AddUsings(SF.UsingDirective(SF.ParseName("Catel.Logging")));
+                updatedNamespace = namespaceDeclaration.AddUsings(
+                    SF.UsingDirective(SF.ParseName("Catel.Logging")).NormalizeWhitespace()).NormalizeWhitespace();
             }
 
             if (updatedNamespace is not null)
             {
-                editor.ReplaceNode(classDeclaration.Parent, updatedNamespace);
+                editor.ReplaceNode(namespaceDeclaration, updatedNamespace);
             }
 
-            return editor.GetChangedDocument();
+            // Replacing namespace node can change root
+            // In that way we can't locate class node to insert Log static field in same batch
+            // Recreate editor for further changes
+            editor = await DocumentEditor.CreateAsync(editor.GetChangedDocument()).ConfigureAwait(false);
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return document;
+            }
+
+            // Create Log member
+            var logStaticFieldSyntax = SF.FieldDeclaration(
+                SF.VariableDeclaration(SF.ParseTypeName("ILog"),
+                SF.SeparatedList(new[]
+                {
+                    SF.VariableDeclarator(SF.Identifier("Log"))
+                    .WithInitializer(SF.EqualsValueClause(SF.InvocationExpression(SF.IdentifierName("LogManager.GetCurrentClassLogger"))))
+                })))
+                .AddModifiers(
+                SF.Token(SyntaxKind.PrivateKeyword), SF.Token(SyntaxKind.StaticKeyword), SF.Token(SyntaxKind.ReadOnlyKeyword));
+
+            var equalClassDeclarationSyntax = editor.OriginalRoot.DescendantNodes()
+                .FirstOrDefault(syntax =>
+                {
+                    if (syntax is ClassDeclarationSyntax syntaxClass)
+                    {
+                        return string.Equals(syntaxClass.Identifier.ValueText, classDeclaration.Identifier.ValueText);
+                    }
+
+                    return false;
+                });
+
+            editor.InsertMembers(equalClassDeclarationSyntax, 0, new[]
+            {
+                logStaticFieldSyntax
+            });
+
+            var changedDocument = editor.GetChangedDocument();
+
+            return changedDocument;
         }
     }
 }

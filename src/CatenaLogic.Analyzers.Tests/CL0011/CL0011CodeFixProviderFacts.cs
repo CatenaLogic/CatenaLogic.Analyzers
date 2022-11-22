@@ -53,6 +53,59 @@ namespace ConsoleApp1
 
                 Solution.Verify<ExceptionsAnalyzer>(analyzer => RoslynAssert.CodeFix(analyzer, Fixer, before, after));
             }
+
+            [TestCase]
+            public void InvalidCode_NestedClass()
+            {
+                var before = @"
+namespace ConsoleApp1
+{
+    using System.Threading;
+    using System.Reflection;
+
+    internal class Program
+    {
+        public Program()
+        {
+
+        }
+
+        internal class NestedProgram
+        {
+            public async Task MakeError()
+            {
+                ↓throw new InvalidOperationException(""Some invalid operation"");
+            }
+        }
+    }
+}";
+                var after =
+@"namespace ConsoleApp1
+{
+    using System.Threading;
+    using System.Reflection;
+    using Catel.Logging;
+
+    internal class Program
+    {
+        public Program()
+        {
+        }
+
+        internal class NestedProgram
+        {
+            private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
+            public async Task MakeError()
+            {
+                throw Log.ErrorAndCreateException<InvalidOperationException>(""Some invalid operation"");
+            }
+        }
+    }
+}";
+
+                Solution.Verify<ExceptionsAnalyzer>(analyzer => RoslynAssert.CodeFix(analyzer, Fixer, before, after));
+            }
         }
     }
 }
