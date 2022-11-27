@@ -12,7 +12,7 @@
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CL0009CodeFixProvider))]
     internal class CL0009CodeFixProvider : CodeFixProvider
     {
-        public const string Title = "Replace with String.Empty";
+        public const string Title = "Replace with string.Empty";
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(Descriptors.CL0009_StringEmptyIsRecommended.Id);
 
         public override FixAllProvider? GetFixAllProvider()

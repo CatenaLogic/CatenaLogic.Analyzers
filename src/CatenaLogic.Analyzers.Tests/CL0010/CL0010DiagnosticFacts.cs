@@ -86,7 +86,7 @@ namespace ConsoleApp1
             }
         }
 
-        public class Reposts_NoDiagnostic
+        public class Reports_NoDiagnostic
         {
             [TestCase]
             public void ValidCode_Contains_CustomRegions()

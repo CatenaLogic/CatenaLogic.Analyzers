@@ -31,7 +31,7 @@
             }
 
             // Ignore constant expression
-            // In some places "" should be complie-time constant, we can't use string.Empty.
+            // In some places "" should be compile-time constant, we can't use string.Empty.
             // Çheck both parent and 1 level higher in operation tree, if value is part of conversion
             var suspectOperation = operation.Parent;
             if (!CanHandleOperation(suspectOperation))

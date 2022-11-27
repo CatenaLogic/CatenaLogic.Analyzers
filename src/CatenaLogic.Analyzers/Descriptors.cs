@@ -67,23 +67,14 @@
             isEnabledByDefault: true,
             description: @"Don't place header on top of code file.");
 
-        internal static readonly DiagnosticDescriptor CL0008_DoUseThrowIfNullForArgumentCheck = Create(
-            id: CL0008Diagnostic.Id,
-            title: "Use ArgumentNullException.ThrowIfNull for argument check",
-            messageFormat: "Use ArgumentNullException.ThrowIfNull for argument check",
-            category: AnalyzerCategory.Argument,
-            defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: true,
-            description: @"Starting from .NET 6 use new ArgumentNullException.ThrowIfNull method instead of Catel.Argument.");
-
         internal static readonly DiagnosticDescriptor CL0009_StringEmptyIsRecommended = Create(
             id: CL0009Diagnostic.Id,
-            title: "Use String.Empty",
-            messageFormat: "Use String.Empty instead of empty string literal",
+            title: "Use string.Empty",
+            messageFormat: "Use string.Empty instead of empty string literal",
             category: AnalyzerCategory.Variable,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: @"Use String.Empty instead of empty string literal.");
+            description: @"Use string.Empty instead of empty string literal.");
 
         internal static readonly DiagnosticDescriptor CL0010_DontKeepClassMemberRegions = Create(
             id: CL0010Diagnostic.Id,
@@ -93,15 +84,6 @@
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: false,
             description: "Don't use #region for organizing class members.");
-
-        internal static readonly DiagnosticDescriptor CL0011_ProvideCatelLogOnThrowingException = Create(
-            id: CL0011Diagnostic.Id,
-            title: "Provide log on throwing exception",
-            messageFormat: "Use Log.ErrorAndCreationException for throwing Exception to provide log information",
-            category: AnalyzerCategory.Exception,
-            defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: true,
-            description: "Use Log.ErrorAndCreationException for throwing Exception to provide log information.");
 
         /// <summary>
         /// Create a DiagnosticDescriptor, which provides description about a <see cref="T:Microsoft.CodeAnalysis.Diagnostic" />.
