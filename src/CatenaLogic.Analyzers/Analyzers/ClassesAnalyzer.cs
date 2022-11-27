@@ -8,17 +8,20 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class ClassesAnalyzer : DiagnosticAnalyzerBase
     {
+        private static readonly SyntaxKind[] TriggerSyntaxNodes = new[]
+        {
+            SyntaxKind.ClassDeclaration,
+            SyntaxKind.RegionDirectiveTrivia,
+            SyntaxKind.EndRegionDirectiveTrivia,
+        };
+
+        /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
             ImmutableArray.Create(Descriptors.CL0010_DontKeepClassMemberRegions);
 
         protected override SyntaxKind[] GetTriggerSyntaxNodes()
         {
-            return new[]
-            {
-                SyntaxKind.ClassDeclaration,
-                SyntaxKind.RegionDirectiveTrivia,
-                SyntaxKind.EndRegionDirectiveTrivia,
-            };
+            return TriggerSyntaxNodes;
         }
 
         protected override bool ShouldHandleSyntaxNode(SyntaxNodeAnalysisContext context)

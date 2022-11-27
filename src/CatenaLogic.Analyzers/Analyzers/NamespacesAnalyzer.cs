@@ -8,6 +8,25 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class NamespacesAnalyzer : DiagnosticAnalyzerBase
     {
+        private static readonly OperationKind[] TriggerOperations = new[]
+        {
+            OperationKind.DeclarationPattern,
+            OperationKind.UsingDeclaration,
+            OperationKind.DeclarationExpression,
+            OperationKind.Block,
+        };
+
+        private static readonly SymbolKind[] TriggerSymbols = new[]
+        {
+            SymbolKind.Namespace
+        };
+
+        private static readonly SyntaxKind[] TriggerSyntaxNodes = new[]
+        {
+            SyntaxKind.NamespaceDeclaration,
+            SyntaxKind.NamespaceKeyword
+        };
+
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(
@@ -18,30 +37,17 @@
 
         protected override OperationKind[] GetTriggerOperations()
         {
-            return new[]
-            {
-                OperationKind.DeclarationPattern,
-                OperationKind.UsingDeclaration,
-                OperationKind.DeclarationExpression,
-                OperationKind.Block,
-            };
+            return TriggerOperations;
         }
 
         protected override SymbolKind[] GetTriggerSymbols()
         {
-            return new[]
-            {
-                SymbolKind.Namespace
-            };
+            return TriggerSymbols;
         }
 
         protected override SyntaxKind[] GetTriggerSyntaxNodes()
         {
-            return new[]
-            {
-                SyntaxKind.NamespaceDeclaration,
-                SyntaxKind.NamespaceKeyword
-            };
+            return TriggerSyntaxNodes;
         }
 
         protected override bool ShouldHandleSyntaxNode(SyntaxNodeAnalysisContext context)
