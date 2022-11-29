@@ -44,7 +44,7 @@
               FixAsync(context.Document, namespaceSyntax, c), equivalenceKey: Title), context.Diagnostics);
         }
 
-        private async Task<Document> FixAsync(Document document, NamespaceDeclarationSyntax namespaceSyntax, CancellationToken cancellationToken)
+        private static async Task<Document> FixAsync(Document document, NamespaceDeclarationSyntax namespaceSyntax, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             if (root is null)
@@ -52,14 +52,12 @@
                 return document;
             }
 
-            var fixedNamespaceSyntax = namespaceSyntax.WithoutLeadingTrivia();
-
             if (cancellationToken.IsCancellationRequested)
             {
                 return document;
             }
 
-            var pendingRoot = root.ReplaceNode(namespaceSyntax, fixedNamespaceSyntax);
+            var pendingRoot = root.ReplaceNode(namespaceSyntax, namespaceSyntax.WithoutLeadingTrivia());
 
             return document.WithSyntaxRoot(pendingRoot);
         }

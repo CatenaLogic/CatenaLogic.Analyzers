@@ -9,7 +9,7 @@
     internal class ExpressionsAnalyzer : DiagnosticAnalyzerBase
     {
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
             ImmutableArray.Create(Descriptors.CL0006_ConstantPatternIsRecommendedForNullCheck);
 
         protected override bool ShouldHandleSyntaxNode(SyntaxNodeAnalysisContext context)

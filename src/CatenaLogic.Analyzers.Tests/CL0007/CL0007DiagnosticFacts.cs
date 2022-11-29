@@ -7,7 +7,7 @@
     [TestFixture]
     public class CL0007DiagnosticFacts
     {
-        public class Reports_Diagnostic_CL0007
+        public class Reports_Diagnostic
         {
             private static readonly ExpectedDiagnostic ExpectedDiagnostic = ExpectedDiagnostic.Create(Descriptors.CL0007_DontPlaceHeaderOnTopOfCodeFile);
 
