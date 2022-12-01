@@ -1,8 +1,5 @@
 ﻿namespace CatenaLogic.Analyzers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;

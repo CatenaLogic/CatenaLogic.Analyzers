@@ -10,4 +10,3 @@ using System.Reflection;
 [assembly: AssemblyFileVersion("1.0.0")]
 [assembly: AssemblyInformationalVersion("1.0.0-alpha.15")]
 [assembly: AssemblyCopyright("Copyright © CatenaLogic 2019 - 2019")]
-

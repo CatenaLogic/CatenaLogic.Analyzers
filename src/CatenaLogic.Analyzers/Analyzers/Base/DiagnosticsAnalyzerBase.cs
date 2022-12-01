@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -9,7 +10,7 @@
 
     internal abstract class DiagnosticAnalyzerBase : DiagnosticAnalyzer
     {
-        private readonly Dictionary<string, IAnalyzer> _analyzers = new Dictionary<string, IAnalyzer>();
+        private readonly Dictionary<string, IDiagnostic> _analyzers = new Dictionary<string, IDiagnostic>();
 
         protected DiagnosticAnalyzerBase()
         {
@@ -25,18 +26,51 @@
 
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterOperationAction(
-                c => HandleOperationAction(c),
+
+            var operations = GetTriggerOperations();
+            if (operations.Any())
+            {
+                context.RegisterOperationAction(c => HandleOperationAction(c), operations);
+            }
+
+            var symbols = GetTriggerSymbols();
+            if (symbols.Any())
+            {
+                context.RegisterSymbolAction(c => HandleSymbolAction(c), symbols);
+            }
+
+            var syntaxes = GetTriggerSyntaxNodes();
+            if (syntaxes.Any())
+            {
+                context.RegisterSyntaxNodeAction(c => HandleSyntaxNodeAction(c), syntaxes);
+            }
+        }
+
+
+        protected virtual OperationKind[] GetTriggerOperations()
+        {
+            return new[]
+            {
                 OperationKind.AnonymousFunction,
                 OperationKind.Await,
                 OperationKind.Block,
                 OperationKind.ExpressionStatement,
-                OperationKind.Invocation);
-            context.RegisterSymbolAction(
-                c => HandleSymbolAction(c),
-                SymbolKind.Method);
-            context.RegisterSyntaxNodeAction(
-                c => HandleSyntaxNodeAction(c),
+                OperationKind.Invocation,
+            };
+        }
+
+        protected virtual SymbolKind[] GetTriggerSymbols()
+        {
+            return new[]
+            {
+                SymbolKind.Method,
+            };
+        }
+
+        protected virtual SyntaxKind[] GetTriggerSyntaxNodes()
+        {
+            return new SyntaxKind[]
+            {
                 SyntaxKind.FieldDeclaration,
                 SyntaxKind.ConstructorDeclaration,
                 SyntaxKind.EventDeclaration,
@@ -46,8 +80,8 @@
                 SyntaxKind.MethodDeclaration,
                 SyntaxKind.EnumDeclaration,
                 SyntaxKind.StructDeclaration,
-                SyntaxKind.ClassDeclaration);
-            //context.RegisterCompilationStartAction(c => HandleCompilationStartAction(c));
+                SyntaxKind.ClassDeclaration,
+            };
         }
 
         protected virtual bool ShouldHandleOperation(OperationAnalysisContext context)
@@ -65,19 +99,19 @@
             return false;
         }
 
-        protected virtual IAnalyzer ResolveAnalyzer(DiagnosticDescriptor descriptor)
+        protected virtual IDiagnostic ResolveAnalyzer(DiagnosticDescriptor descriptor)
         {
-            var typeName = $"CatenaLogic.Analyzers.{descriptor.Id}Analyzer";
+            var typeName = $"CatenaLogic.Analyzers.{descriptor.Id}Diagnostic";
             var type = Type.GetType(typeName);
             if (type is null)
             {
-                throw new Exception($"Cannot create analyzer from '{typeName}'");
+                throw new Exception($"Cannot create diagnostic from '{typeName}'");
             }
 
-            var analyzer = Activator.CreateInstance(type) as IAnalyzer;
+            var analyzer = Activator.CreateInstance(type) as IDiagnostic;
             if (analyzer is null)
             {
-                throw new Exception($"Cannot create analyzer from '{typeName}'");
+                throw new Exception($"Cannot create diagnostic from '{typeName}'");
             }
 
             return analyzer;

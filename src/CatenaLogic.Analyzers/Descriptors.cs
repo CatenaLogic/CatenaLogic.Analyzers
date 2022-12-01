@@ -58,6 +58,33 @@
            isEnabledByDefault: true,
            description: @"Starting with C# 7.0 the constant pattern is supported by the ""is"" keyword. Performing pattern matching with ""null"" ""is"" can be used to test whether an expression equals a null.");
 
+        internal static readonly DiagnosticDescriptor CL0007_DontPlaceHeaderOnTopOfCodeFile = Create(
+            id: CL0007Diagnostic.Id,
+            title: @"Don't place header on top of code file",
+            messageFormat: @"Don't place header on top of code file",
+            category: AnalyzerCategory.Text,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: @"Don't place header on top of code file.");
+
+        internal static readonly DiagnosticDescriptor CL0009_StringEmptyIsRecommended = Create(
+            id: CL0009Diagnostic.Id,
+            title: "Use string.Empty",
+            messageFormat: "Use string.Empty instead of empty string literal",
+            category: AnalyzerCategory.Variable,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: @"Use string.Empty instead of empty string literal.");
+
+        internal static readonly DiagnosticDescriptor CL0010_DontKeepClassMemberRegions = Create(
+            id: CL0010Diagnostic.Id,
+            title: "Don't keep class member regions",
+            messageFormat: "Don't use #region for organizing class members",
+            category: AnalyzerCategory.Text,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: false,
+            description: "Don't use #region for organizing class members.");
+
         /// <summary>
         /// Create a DiagnosticDescriptor, which provides description about a <see cref="T:Microsoft.CodeAnalysis.Diagnostic" />.
         /// NOTE: For localizable <paramref name="title" />, <paramref name="description" /> and/or <paramref name="messageFormat" />,
