@@ -28,6 +28,11 @@
                 return;
             }
 
+            if (diagnosticNode is ArgumentSyntax argument)
+            {
+                diagnosticNode = argument.Expression;
+            }
+
             if (diagnosticNode is not LiteralExpressionSyntax literal || !literal.IsKind(SyntaxKind.StringLiteralExpression))
             {
                 return;

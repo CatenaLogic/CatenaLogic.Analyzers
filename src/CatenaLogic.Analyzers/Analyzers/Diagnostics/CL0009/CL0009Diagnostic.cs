@@ -1,5 +1,6 @@
 ﻿namespace CatenaLogic.Analyzers
 {
+    using System.Diagnostics;
     using System.Linq;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -66,7 +67,8 @@
                     }
                 }
 
-                if (operation.Syntax.IsKind(SyntaxKind.Attribute))
+                if (operation.Syntax.IsKind(SyntaxKind.Attribute) ||
+                    operation.Syntax.IsKind(SyntaxKind.AttributeArgument))
                 {
                     return false;
                 }
