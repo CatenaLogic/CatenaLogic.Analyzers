@@ -47,6 +47,46 @@ namespace ConsoleApp1
 
                 Solution.Verify<VariablesAnalyzer>(analyzer => RoslynAssert.CodeFix(analyzer, Fixer, before, after));
             }
+
+            [TestCase]
+            public void InvalidCode_NestedInvocation()
+            {
+                var before = @"
+namespace ConsoleApp1
+{
+    using System.ComponentModel;
+    using NUnit.Framework;
+
+    public class DummyClass
+    {
+        [TestCase]
+        public void Convert_EmptyString()
+        {
+            var converter = new ContainsItemsConverter();
+            Assert.AreEqual(false, converter.Convert(↓"""", typeof (bool), null, (CultureInfo)null));
+        }
+    }
+}";
+
+                var after = @"
+namespace ConsoleApp1
+{
+    using System.ComponentModel;
+    using NUnit.Framework;
+
+    public class DummyClass
+    {
+        [TestCase]
+        public void Convert_EmptyString()
+        {
+            var converter = new ContainsItemsConverter();
+            Assert.AreEqual(false, converter.Convert(string.Empty, typeof (bool), null, (CultureInfo)null));
+        }
+    }
+}";
+
+                Solution.Verify<VariablesAnalyzer>(analyzer => RoslynAssert.CodeFix(analyzer, Fixer, before, after));
+            }
         }
     }
 }
