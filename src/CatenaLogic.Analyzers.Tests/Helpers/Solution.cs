@@ -3,6 +3,7 @@
     using System;
     using System.Linq;
     using Gu.Roslyn.Asserts;
+    using Microsoft.CodeAnalysis;
     using NUnit.Framework;
 
     internal static class Solution
@@ -25,9 +26,11 @@
                 var debugMetadataReferences = MetadataReferences.CreateFromAssembly(typeof(System.Diagnostics.Debug).Assembly)
                     .WithAliases(new[] { "global", "System" });
                 var transitiveMetadataReferences = MetadataReferences.Transitive(typeof(ValidCodeWithAllAnalyzers).Assembly);
+                var nunitReferences = MetadataReferences.CreateFromAssembly(typeof(NUnit.Framework.TestCaseAttribute).Assembly);
 
                 var allMetadata = transitiveMetadataReferences.Append(debugMetadataReferences)
-                    .Append(systemMetadataReferences);
+                    .Append(systemMetadataReferences)
+                    .Append(nunitReferences);
 
                 Settings.Default = Settings.Default.WithAllowedCompilerDiagnostics(AllowedCompilerDiagnostics.WarningsAndErrors)
                     .WithMetadataReferences(refs => refs.Concat(allMetadata));

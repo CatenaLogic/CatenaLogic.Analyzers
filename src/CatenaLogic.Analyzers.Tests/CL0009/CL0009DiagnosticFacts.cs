@@ -83,7 +83,7 @@ namespace ConsoleApp1
             }
 
             [TestCase]
-            public void ValidCode_CompileTime_Constant_Attribute_Argument()
+            public void ValidCode_CompileTime_Constant_Attribute_Argument_1()
             {
                 var before = @"
 namespace ConsoleApp1
@@ -94,6 +94,32 @@ namespace ConsoleApp1
     {
         [DisplayName(displayName: """")]
         public bool NoExtensions { get; set; }
+    }
+}";
+
+                Solution.Verify<VariablesAnalyzer>(analyzer => RoslynAssert.NoAnalyzerDiagnostics(analyzer, Descriptors.CL0009_StringEmptyIsRecommended, before));
+            }
+
+            [TestCase]
+            public void ValidCode_CompileTime_Constant_Attribute_Argument_2()
+            {
+                var before = @"
+namespace ConsoleApp1
+{
+    using System;
+    using System.ComponentModel;
+    using NUnit.Framework;
+
+    [TestFixture]
+    public class SomeTestFixture
+    {
+        [TestCase(null)]
+        [TestCase("""")]
+        [TestCase("" "")]
+        public void ThrowsArgumentExceptionForNullOrEmptyType(string type)
+        {
+            Assert.Throws<ArgumentException>(() => throw new ArgumentException(type));
+        }
     }
 }";
 
