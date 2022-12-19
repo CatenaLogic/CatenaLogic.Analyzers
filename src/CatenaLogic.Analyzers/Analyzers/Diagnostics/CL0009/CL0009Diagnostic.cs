@@ -1,6 +1,6 @@
 ﻿namespace CatenaLogic.Analyzers
 {
-    using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using Gu.Roslyn.AnalyzerExtensions;
     using Microsoft.CodeAnalysis;
@@ -49,16 +49,21 @@
             context.ReportDiagnostic(Diagnostic.Create(Descriptors.CL0009_StringEmptyIsRecommended, operation.Syntax.GetLocation()));
         }
 
-        private bool CanHandleOperation(IOperation? operation)
+        private bool CanHandleOperation([MaybeNullWhen(true)] IOperation? operation)
         {
             if (operation is not null)
             {
+                if (operation.Kind == OperationKind.CaseClause)
+                {
+                    return false;
+                }
+
                 if (operation.Kind == OperationKind.ParameterInitializer)
                 {
                     return false;
                 }
 
-                if (operation is IFieldInitializerOperation fieldInitializer)
+                if (operation.Kind == OperationKind.FieldInitializer && operation is IFieldInitializerOperation fieldInitializer)
                 {
                     var fieldSymbol = fieldInitializer.InitializedFields.FirstOrDefault();
                     if (fieldSymbol is null || fieldSymbol.IsConst)

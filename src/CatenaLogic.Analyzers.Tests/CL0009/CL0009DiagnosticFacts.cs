@@ -147,6 +147,32 @@ namespace ConsoleApp1
 
                 Solution.Verify<VariablesAnalyzer>(analyzer => RoslynAssert.NoAnalyzerDiagnostics(analyzer, Descriptors.CL0009_StringEmptyIsRecommended, before));
             }
+
+            [TestCase]
+            public void ValidCode_CompileTime_Constant_SwitchExpression()
+            {
+                var before = @"
+namespace Test
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            switch (args[0])
+            {
+                case ""foo"":
+                    break;
+                case """":
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+}";
+
+                Solution.Verify<VariablesAnalyzer>(analyzer => RoslynAssert.NoAnalyzerDiagnostics(analyzer, Descriptors.CL0009_StringEmptyIsRecommended, before));
+            }
         }
     }
 }
