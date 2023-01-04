@@ -11,6 +11,8 @@
 
     internal class CL0009Diagnostic : DiagnosticBase
     {
+        private const int MaxOperationSearchDepth = 4;
+
         public const string Id = "CL0009";
 
         public override void HandleOperation(OperationAnalysisContext context)
@@ -49,7 +51,7 @@
             context.ReportDiagnostic(Diagnostic.Create(Descriptors.CL0009_StringEmptyIsRecommended, operation.Syntax.GetLocation()));
         }
 
-        private bool CanHandleOperation([MaybeNullWhen(true)] IOperation? operation)
+        private static bool CanHandleOperation([MaybeNullWhen(true)] IOperation? operation)
         {
             if (operation is not null)
             {
@@ -61,6 +63,16 @@
                 if (operation.Kind == OperationKind.ParameterInitializer)
                 {
                     return false;
+                }
+
+                if (operation.Kind == OperationKind.ArrayInitializer)
+                {
+                    var topOperation = FindTopMostOperation(operation, MaxOperationSearchDepth);
+                    if (topOperation.Syntax.IsKind(SyntaxKind.Attribute) ||
+                        topOperation.Syntax.IsKind(SyntaxKind.AttributeArgument))
+                    {
+                        return false;
+                    }
                 }
 
                 if (operation.Kind == OperationKind.FieldInitializer && operation is IFieldInitializerOperation fieldInitializer)
@@ -82,9 +94,27 @@
             return true;
         }
 
-        private bool CanHandleSyntaxNode(LiteralExpressionSyntax? syntaxNode)
+        private static bool CanHandleSyntaxNode(LiteralExpressionSyntax? syntaxNode)
         {
             return syntaxNode is not null && string.IsNullOrEmpty(syntaxNode.Token.ValueText);
+        }
+
+        private static IOperation FindTopMostOperation(IOperation operation, int maxDepth)
+        {
+            var i = maxDepth;
+            while (i > 0 && operation.Kind != OperationKind.None)
+            {
+                i--;
+                var parent = operation.Parent;
+                if (parent is null)
+                {
+                    break;
+                }
+
+                operation = parent;
+            }
+
+            return operation;
         }
     }
 }
