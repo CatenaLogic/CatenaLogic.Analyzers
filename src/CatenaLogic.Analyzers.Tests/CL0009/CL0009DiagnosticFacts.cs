@@ -173,6 +173,30 @@ namespace Test
 
                 Solution.Verify<VariablesAnalyzer>(analyzer => RoslynAssert.NoAnalyzerDiagnostics(analyzer, Descriptors.CL0009_StringEmptyIsRecommended, before));
             }
+
+            [TestCase]
+            public void ValidCode_CompileTime_Constant_Attribute_Argument_Initializer()
+            {
+                var before = @"
+namespace ConsoleApp1
+{
+    using System;
+    using System.ComponentModel;
+    using NUnit.Framework;
+
+    [TestFixture]
+    public class SomeTestFixture
+    {
+        [TestCase(new[] { """" })]
+        public void ThrowsArgumentExceptionForNullOrEmptyType(string[] types)
+        {
+            throw new ArgumentException(types);
+        }
+    }
+}";
+
+                Solution.Verify<VariablesAnalyzer>(analyzer => RoslynAssert.NoAnalyzerDiagnostics(analyzer, Descriptors.CL0009_StringEmptyIsRecommended, before));
+            }
         }
     }
 }
