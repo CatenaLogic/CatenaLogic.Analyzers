@@ -31,6 +31,11 @@
                 return;
             }
 
+            if (IsTestProject(context))
+            {
+                return;
+            }
+
             // Ignore Main method
             if (methodSymbol.IsStatic && string.Equals(methodSymbol.Name, DefaultMainMethodName))
             {
@@ -48,7 +53,6 @@
             }
 
             var diagnosticLocation = methodSymbol.Locations.FirstOrDefault();
-
             if (diagnosticLocation is null)
             {
                 return;

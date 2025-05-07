@@ -78,7 +78,7 @@ public class C
         }
 
         [Test]
-        // Ingore Main check
+        // Ignore Main check
         public void Valid_Code_03()
         {
             var before = @"

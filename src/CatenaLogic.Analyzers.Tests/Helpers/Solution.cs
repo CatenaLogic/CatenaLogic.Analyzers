@@ -3,7 +3,6 @@
     using System;
     using System.Linq;
     using Gu.Roslyn.Asserts;
-    using Microsoft.CodeAnalysis;
     using NUnit.Framework;
 
     internal static class Solution
