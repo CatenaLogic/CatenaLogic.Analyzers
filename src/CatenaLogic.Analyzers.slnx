@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/misc/">
+    <File Path="GlobalSuppressions.cs" />
+    <File Path="MethodTimeLogger.cs" />
+    <File Path="SolutionAssemblyInfo.cs" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="CatenaLogic.Analyzers.Tests/CatenaLogic.Analyzers.Tests.csproj" />
+    <Project Path="CatenaLogic.Analyzers/CatenaLogic.Analyzers.csproj" />
+  </Folder>
+</Solution>
