@@ -23,6 +23,7 @@ jobs:
   build:
     runs-on: windows-latest # Required for some (WPF) projects
     env:
+      Category: 'Public'
       AzureCodeSignCertificateName: ''
       AzureCodeSignClientId: ''
       AzureCodeSignClientSecret: ''
